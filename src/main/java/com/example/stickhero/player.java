@@ -4,6 +4,16 @@ public class player {
     private int score;
     private int cherries;
 
+    private stickman myAvatar;
+
+    public stickman getMyAvatar() {
+        return myAvatar;
+    }
+
+    public void setMyAvatar(stickman myAvatar) {
+        this.myAvatar = myAvatar;
+    }
+
     @Override
     public String toString() {
         return "player{" +
@@ -31,6 +41,7 @@ public class player {
     public player(int score, int cherries) {
         this.score = score;
         this.cherries = cherries;
+        this.myAvatar = new stickman();
     }
 
     public void revive(){
