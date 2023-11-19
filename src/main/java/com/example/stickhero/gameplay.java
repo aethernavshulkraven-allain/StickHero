@@ -2,14 +2,14 @@ package com.example.stickhero;
 
 import java.util.ArrayList;
 
-public class gameplay {
+public class gameplay{
     private stickman playingStickman;
     public ArrayList<pillar> pillars = new ArrayList<pillar>();
     //player iterates over all the pillars
 
     private pauseButton pauseGameButton;
 
-    public stickman getPlayingStickman() {
+    public stickman getPlayingStickman() throws stickmanNotFoundError{
         return playingStickman;
     }
 

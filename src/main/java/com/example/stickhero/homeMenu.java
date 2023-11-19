@@ -9,7 +9,7 @@ public class homeMenu implements menu{
     private playButton playGameButton;
     private settingsMenuButton openSettingsMenuButton;
 
-    public void playGame(){
+    public void playGame() throws gameNotFoundError{
         //called by playGameButton
         gameplay game = new gameplay();
     }

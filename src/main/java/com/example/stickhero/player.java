@@ -10,7 +10,7 @@ public class player {
 
     private stickman myAvatar;
 
-    public stickman getMyAvatar() {
+    public stickman getMyAvatar() throws stickmanNotFoundError {
         return myAvatar;
     }
 
