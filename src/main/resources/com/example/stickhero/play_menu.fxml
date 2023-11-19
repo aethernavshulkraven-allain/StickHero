@@ -39,7 +39,7 @@
       </Text>
       <ImageView fitHeight="47.0" fitWidth="57.0" layoutX="27.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@0x0ss-85%20Background%20Removed.png" />
+            <Image url="@0x0ss-85BackgroundRemoved.png" />
          </image>
       </ImageView>
    </children>
