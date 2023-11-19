@@ -1,14 +1,20 @@
 package com.example.stickhero;
 
+import java.util.ArrayList;
+
 public class player {
-    private int score;
+    private score score;
     private int cherries;
+
+    private ArrayList<cherry> listOfCherries = new ArrayList<cherry>();
 
     private stickman myAvatar;
 
     public stickman getMyAvatar() {
         return myAvatar;
     }
+
+    private ArrayList<score> myScores = new ArrayList<score>();;
 
     public void setMyAvatar(stickman myAvatar) {
         this.myAvatar = myAvatar;
@@ -22,11 +28,11 @@ public class player {
                 '}';
     }
 
-    public int getScore() {
+    public score getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(score score) {
         this.score = score;
     }
 
@@ -38,10 +44,10 @@ public class player {
         this.cherries = cherries;
     }
 
-    public player(int score, int cherries) {
+    public player(score score, int cherries) {
         this.score = score;
         this.cherries = cherries;
-        this.myAvatar = new stickman();
+        this.myAvatar = new stickman(new coordinates(0, 0));
     }
 
     public void revive(){

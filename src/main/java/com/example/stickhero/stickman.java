@@ -1,9 +1,25 @@
 package com.example.stickhero;
 
-public class stickman {
+public class stickman implements gameObjects, collidable    {
+
+    private stick avatarsStick;
+    private coordinates position;
+
+    public coordinates getPosition() {
+        return position;
+    }
+
+    public void setPosition(coordinates position) {
+        this.position = position;
+    }
+
+    public stickman(coordinates stickmanPosition) {
+        this.position = stickmanPosition;
+    }
+
     public stick extendStick(){
         //extends stick of length equal to the time of hold of master key
-        stick newstick = new stick();
+        stick newstick = new stick(new coordinates(0, 0), 0);
         return newstick;
     }
 
