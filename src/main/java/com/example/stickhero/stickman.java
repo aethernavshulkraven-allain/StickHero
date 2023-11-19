@@ -19,8 +19,8 @@ public class stickman implements gameObjects, collidable    {
 
     public stick extendStick(){
         //extends stick of length equal to the time of hold of master key
-        stick newstick = new stick(new coordinates(0, 0), 0);
-        return newstick;
+        avatarsStick = new stick(new coordinates(0, 0), 0);
+        return avatarsStick;
     }
 
     public void invert(){

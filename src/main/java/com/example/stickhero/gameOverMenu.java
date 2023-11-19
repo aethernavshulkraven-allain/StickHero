@@ -7,6 +7,10 @@ public class gameOverMenu implements menu{
     private homeButton goHomeButton;
     private restartButton restartButton;
 
+    public void restartGame(){
+        //called by restartButton
+    }
+
     private leaderbrdButton leaderbrdButton;
 
     public void viewLeaderboard() {
