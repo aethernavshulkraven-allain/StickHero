@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.stickhero.HelloController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.stickhero.Clickap">
    <children>
       <ImageView fitHeight="413.0" fitWidth="602.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -40,7 +40,8 @@
             <Image url="@0x0ss-85BackgroundRemoved.png" />
          </image>
       </ImageView>
-      <Button layoutX="8.0" layoutY="6.0" mnemonicParsing="false" onAction="#toPauseMenu" style="-fx-background-color: transparent;">
+      <Rectangle fx:id="rct" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="63.0" layoutX="74.0" layoutY="184.0" onMouseClicked="#handle" onMouseEntered="#handle" onMouseMoved="#handle" onMousePressed="#handle" stroke="BLACK" strokeType="INSIDE" width="11.0" />
+      <Button layoutX="8.0" layoutY="6.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
          <graphic>
             <ImageView fitHeight="45.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                <image>

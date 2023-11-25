@@ -32,5 +32,12 @@ public class HelloController {
         stage.show();
     }
 
+    public void toGameOverScreen(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("gameOverScreen.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
 
 }
