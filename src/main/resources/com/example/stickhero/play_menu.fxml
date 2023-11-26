@@ -40,7 +40,7 @@
             <Image url="@0x0ss-85BackgroundRemoved.png" />
          </image>
       </ImageView>
-      <Button layoutX="8.0" layoutY="6.0" mnemonicParsing="false" onAction="#toPauseMenu" style="-fx-background-color: transparent;">
+      <Button layoutX="8.0" layoutY="6.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
          <graphic>
             <ImageView fitHeight="45.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                <image>
