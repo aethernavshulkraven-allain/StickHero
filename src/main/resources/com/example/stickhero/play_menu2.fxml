@@ -25,22 +25,22 @@
                 <Font name="Kamikaze 3D Gradient Italic" size="44.0" />
             </font>
         </Text>
-        <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="-10.0" layoutY="248.0" stroke="BLACK" strokeType="INSIDE" width="106.0" />
-        <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="198.0" layoutY="249.0" stroke="BLACK" strokeType="INSIDE" width="70.0" />
-        <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="352.0" layoutY="249.0" stroke="BLACK" strokeType="INSIDE" width="57.0" />
-        <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="498.0" layoutY="249.0" stroke="BLACK" strokeType="INSIDE" width="86.0" />
-        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#929394" height="63.0" layoutX="250.0" layoutY="17.0" opacity="0.45" stroke="BLACK" strokeType="INSIDE" width="101.0" />
+<!--        <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="-10.0" layoutY="248.0" stroke="BLACK" strokeType="INSIDE" width="106.0" />-->
+<!--        <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="198.0" layoutY="249.0" stroke="BLACK" strokeType="INSIDE" width="70.0" />-->
+<!--        <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="352.0" layoutY="249.0" stroke="BLACK" strokeType="INSIDE" width="57.0" />-->
+<!--        <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="498.0" layoutY="249.0" stroke="BLACK" strokeType="INSIDE" width="86.0" />-->
+<!--        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#929394" height="63.0" layoutX="250.0" layoutY="17.0" opacity="0.45" stroke="BLACK" strokeType="INSIDE" width="101.0" />-->
         <Text layoutX="216.0" layoutY="102.0" stroke="#f8f6f6" strokeType="OUTSIDE" strokeWidth="0.0" text="Hold the spacebar to strecth out the stick." textAlignment="CENTER" wrappingWidth="170.09423828125">
             <font>
                 <Font name="System Bold" size="13.0" />
             </font>
         </Text>
-        <ImageView fitHeight="47.0" fitWidth="57.0" layoutX="27.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@0x0ss-85BackgroundRemoved.png" />
-            </image>
-        </ImageView>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="69.0" layoutX="80.0" layoutY="178.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />
+<!--        <ImageView fitHeight="47.0" fitWidth="57.0" layoutX="27.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true">-->
+<!--            <image>-->
+<!--                <Image url="@0x0ss-85BackgroundRemoved.png" />-->
+<!--            </image>-->
+<!--        </ImageView>-->
+<!--      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="69.0" layoutX="80.0" layoutY="178.0" stroke="BLACK" strokeType="INSIDE" width="10.0" />-->
         <Button layoutX="8.0" layoutY="6.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
             <graphic>
                 <ImageView fitHeight="45.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
