@@ -113,7 +113,7 @@ public class Start2 extends Application {
             pillar2.setLayoutX(generateRandomNumber(200, 400));
             pillar2.setLayoutY(300);
 
-            stickRct = new Rectangle(7.5, 100, Color.WHITE);
+            stickRct = new Rectangle(7.5, 110, Color.WHITE);
             stickRct.setLayoutX(pillar1.getLayoutX() + pillar1.getWidth());
             stickRct.setLayoutY(190);
 
@@ -122,16 +122,7 @@ public class Start2 extends Application {
             scale.setToY(2.0);
 
             // Set the pivot point to the bottom of the rectangle using a Rotate transform
-            Rotate rotateTransform = new Rotate();
 
-//            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
-//            rotateTransform.pivotXProperty().bind(rct.layoutXProperty().add(rct.widthProperty()));
-            rotateTransform.setPivotX(stickRct.getX());
-            rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
-            stickRct.getTransforms().add(rotateTransform);
-            timeline1 = new Timeline(
-                    new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
-                    new KeyFrame(Duration.seconds(2), new KeyValue(rotateTransform.angleProperty(), 90)));
 
             //fitHeight="47.0" fitWidth="57.0"
             stickmanImageView.setFitHeight(47.0);
@@ -213,6 +204,17 @@ public class Start2 extends Application {
 
     private void handleKeyReleased(KeyEvent keyEvent) {
         scale.stop();
+        Rotate rotateTransform = new Rotate();
+
+//            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
+//            rotateTransform.pivotXProperty().bind(rct.layoutXProperty().add(rct.widthProperty()));
+        rotateTransform.setPivotX(stickRct.getX());
+        rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
+        stickRct.getTransforms().add(rotateTransform);
+        timeline1 = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
+                new KeyFrame(Duration.seconds(2), new KeyValue(rotateTransform.angleProperty(), 90)));
+
         timeline1.play();
 
         PauseTransition pause = new PauseTransition(Duration.seconds(2));
@@ -242,7 +244,7 @@ public class Start2 extends Application {
                     scenePane.getChildren().add(pillar1);
                     stickmanTransition.setToX(pillar2.getLayoutX() - pillar2.getWidth()/2);
                     stickmanTransition.play();
-                    stickRct = new Rectangle(7.5, 100, Color.WHITE);
+                    stickRct = generate_stick();
                     stickRct.setLayoutX(pillar1.getLayoutX() + pillar1.getWidth());
                     stickRct.setLayoutY(190);
                     scenePane.getChildren().add(stickRct);
@@ -275,6 +277,27 @@ public class Start2 extends Application {
 
         // Add the new pillar2 to the scene
         scenePane.getChildren().add(pillar2);
+    }
+
+
+    private Rectangle generate_stick(){
+        Rectangle stickRct = new Rectangle(7.5, 100, Color.WHITE);
+        stickRct.setLayoutX(pillar1.getLayoutX() + pillar1.getWidth());
+        stickRct.setLayoutY(190);
+
+        scale = new ScaleTransition(Duration.millis(4000), stickRct);
+        scale.setFromY(1.0);
+        scale.setToY(2.0);
+
+        // Set the pivot point to the bottom of the rectangle using a Rotate transform
+        Rotate rotateTransform = new Rotate();
+
+//            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
+//            rotateTransform.pivotXProperty().bind(rct.layoutXProperty().add(rct.widthProperty()));
+        rotateTransform.setPivotX(stickRct.getX());
+        rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
+        stickRct.getTransforms().add(rotateTransform);
+        return stickRct;
     }
 
 
