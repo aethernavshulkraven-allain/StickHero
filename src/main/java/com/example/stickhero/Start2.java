@@ -51,6 +51,9 @@ import java.util.Set;
 
 import javafx.util.Duration;
 
+import static java.lang.System.exit;
+
+
 public class Start2 extends Application {
 
     private Set<KeyCode> pressedKeys = new HashSet<>();
@@ -58,6 +61,8 @@ public class Start2 extends Application {
 
     private RotateTransition rotate;
     private TranslateTransition stickmanTransition;
+    private TranslateTransition t;
+
     private TranslateTransition stickmanTransitionQuick;
     private TranslateTransition pillar1Transition;
     private TranslateTransition pillar2Transition;
@@ -87,6 +92,7 @@ public class Start2 extends Application {
     }
 
     public static Pane scenePane;
+    private int start_x = 75;
 
 
     //stickman
@@ -99,23 +105,21 @@ public class Start2 extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("play_menu2.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("play_menu3.fxml"));
             scenePane = new Pane(root);
 
             //generate random pillars
             //Pair<Double, Double> pillar1Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
-            pillar1 = new Rectangle(generateRandomNumber(30, 100), 100, Color.BLACK);
-            pillar1.setLayoutX(75);
-            pillar1.setLayoutY(300);
+            pillar1 = new Rectangle(generateRandomNumber(70, 150), 200, Color.BLACK);
+            pillar1.setLayoutX(20);
+            pillar1.setLayoutY(500);
 
             //Pair<Double, Double> pillar2Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
-            pillar2 = new Rectangle(generateRandomNumber(30, 100), 100, Color.BLACK);
-            pillar2.setLayoutX(generateRandomNumber(200, 400));
-            pillar2.setLayoutY(300);
+            pillar2 = new Rectangle(generateRandomNumber(70, 200), 200, Color.BLUE);
+            pillar2.setLayoutX(generateRandomNumber(150, 270));
+            pillar2.setLayoutY(500);
 
-            stickRct = new Rectangle(7.5, 110, Color.WHITE);
-            stickRct.setLayoutX(pillar1.getLayoutX() + pillar1.getWidth());
-            stickRct.setLayoutY(190);
+
 
             scale = new ScaleTransition(Duration.millis(4000), stickRct);
             scale.setFromY(1.0);
@@ -128,7 +132,13 @@ public class Start2 extends Application {
             stickmanImageView.setFitHeight(47.0);
             stickmanImageView.setFitWidth(57.0);
             stickmanImageView.setLayoutX(pillar1.getLayoutX());
-            stickmanImageView.setLayoutY(250);
+            start_x = 75;
+            stickmanImageView.setLayoutY(500-stickmanImageView.getFitHeight());
+
+            stickRct = new Rectangle(7.5, 1, Color.WHITE);
+            stickRct.setLayoutX(stickmanImageView.getLayoutX()+stickmanImageView.getFitWidth()-5);
+
+            stickRct.setLayoutY(stickmanImageView.getLayoutY()+stickmanImageView.getFitHeight());
 
             scenePane.getChildren().add(stickRct);
             scenePane.getChildren().add(pillar1);
@@ -153,10 +163,8 @@ public class Start2 extends Application {
     }
 
     private static double generateRandomNumber(double a, double b) {
-        // Create an instance of Random class
         Random random = new Random();
 
-        // Generate a random number within the specified range [a, b]
         return random.nextDouble(b - a + 1) + a;
     }
 
@@ -167,15 +175,127 @@ public class Start2 extends Application {
 
         if (pressedKeys.contains(KeyCode.A)) {
             // Increase the height and adjust the Y position
-            double newHeight = stickRct.getHeight() + 1;
-            double newY = stickRct.getY() - 1;
+            double newHeight = stickRct.getHeight() + 5;
+            double newY = stickRct.getY() - 5;
             stickRct.setHeight(newHeight);
             stickRct.setY(newY);
         }
         // Add other key handling as needed
     }
 
-//    private void handleKeyReleased(KeyEvent keyEvent) {
+
+
+    private void handleKeyReleased(KeyEvent keyEvent) {
+        scale.stop();
+        Rotate rotateTransform = new Rotate();
+
+//            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
+//            rotateTransform.pivotXProperty().bind(rct.layoutXProperty().add(rct.widthProperty()));
+        rotateTransform.setPivotX(stickRct.getX());
+        rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
+        stickRct.getTransforms().add(rotateTransform);
+        timeline1 = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
+                new KeyFrame(Duration.seconds(2), new KeyValue(rotateTransform.angleProperty(), 90)));
+
+        timeline1.play();
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+
+        // Set the action to be performed after the pause
+        pause.setOnFinished(event -> {
+            // Check if stickRct falls on pillar2 from pillar1
+            if (stickRct.getHeight() + stickRct.getLayoutX() >= pillar2.getLayoutX() && stickRct.getHeight() + stickRct.getLayoutX() <= pillar2.getLayoutX() + pillar2.getWidth()) {
+                // Move stick man to pillar2 through animation
+                double targetX = stickmanImageView.getLayoutX()+stickRct.getHeight();
+                stickmanTransition.setToX(targetX);
+                stickmanTransition.play();
+
+                PauseTransition pause2 = new PauseTransition(Duration.seconds(2));
+                pause2.setOnFinished(event2 -> {
+//                    scenePane.getChildren().remove(pillar1);
+                    stickmanTransition.setToX(20);
+                    pillar2Transition.setToX(20);
+                    pillar2Transition.play();
+
+                    stickmanTransition.play();
+                    scenePane.getChildren().remove(stickRct);
+                });
+
+                pause2.play();
+
+                PauseTransition pause3 = new PauseTransition(Duration.seconds(2));
+                pause3.setOnFinished(event3 -> {
+                    pillar2.setLayoutX(pillar1.getLayoutX());
+                    pillar1 = pillar2;
+                    scenePane.getChildren().remove(pillar2);
+                    scenePane.getChildren().add(pillar1);
+                    stickmanTransition.setToX(pillar2.getLayoutX() - pillar2.getWidth()/2);
+                    stickmanTransition.play();
+                    stickRct = generate_stick();
+
+                    scenePane.getChildren().add(stickRct);
+
+                    generateNewPillar2();
+
+
+                });
+
+                pause3.play();
+            }
+
+            else {
+                // Bring stick man to y = 0 through animation
+                double targetX = stickRct.getHeight();
+                stickmanTransition.setToX(targetX);
+                stickmanTransition.play();
+//                stickmanTransition.setToX(stickmanImageView.getX() + stickRct.getHeight());
+                stickmanTransition.setToY(350);
+                stickmanTransition.play();
+                exit(1);
+            }
+        });
+
+        // Start the pause
+        pause.play();
+    }
+
+    private void generateNewPillar2() {
+
+        pillar2 = new Rectangle(generateRandomNumber(70, 200), 200, Color.BLACK);
+        pillar2.setLayoutX(generateRandomNumber(150, 270));
+        pillar2.setLayoutY(500);
+
+        // Add the new pillar2 to the scene
+        scenePane.getChildren().add(pillar2);
+    }
+
+
+    private Rectangle generate_stick(){
+        stickRct = new Rectangle(7.5, 1, Color.WHITE);
+        stickRct.setLayoutX(stickmanImageView.getLayoutX()+stickmanImageView.getFitWidth()-5);
+
+        stickRct.setLayoutY(stickmanImageView.getLayoutY()+stickmanImageView.getFitHeight());
+
+        scale = new ScaleTransition(Duration.millis(4000), stickRct);
+        scale.setFromY(1.0);
+        scale.setToY(2.0);
+
+        // Set the pivot point to the bottom of the rectangle using a Rotate transform
+        Rotate rotateTransform = new Rotate();
+
+//            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
+//            rotateTransform.pivotXProperty().bind(rct.layoutXProperty().add(rct.widthProperty()));
+        rotateTransform.setPivotX(stickRct.getX());
+        rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
+        stickRct.getTransforms().add(rotateTransform);
+        return stickRct;
+    }
+
+
+
+
+    //    private void handleKeyReleased(KeyEvent keyEvent) {
 //        scale.stop();
 //        timeline1.play();
 //
@@ -201,109 +321,6 @@ public class Start2 extends Application {
 //        // Start the pause
 //        pause.play();
 //    }
-
-    private void handleKeyReleased(KeyEvent keyEvent) {
-        scale.stop();
-        Rotate rotateTransform = new Rotate();
-
-//            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
-//            rotateTransform.pivotXProperty().bind(rct.layoutXProperty().add(rct.widthProperty()));
-        rotateTransform.setPivotX(stickRct.getX());
-        rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
-        stickRct.getTransforms().add(rotateTransform);
-        timeline1 = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
-                new KeyFrame(Duration.seconds(2), new KeyValue(rotateTransform.angleProperty(), 90)));
-
-        timeline1.play();
-
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
-
-        // Set the action to be performed after the pause
-        pause.setOnFinished(event -> {
-            // Check if stickRct falls on pillar2 from pillar1
-            if (stickRct.getHeight() + stickRct.getLayoutX() >= pillar2.getLayoutX() && stickRct.getHeight() + stickRct.getLayoutX() <= pillar2.getLayoutX() + pillar2.getWidth()) {
-                // Move stick man to pillar2 through animation
-                double targetX = pillar2.getLayoutX() - pillar2.getWidth();
-                stickmanTransition.setToX(targetX);
-                stickmanTransition.play();
-
-                PauseTransition pause2 = new PauseTransition(Duration.seconds(2));
-                pause2.setOnFinished(event2 -> {
-                    scenePane.getChildren().remove(pillar1);
-                    scenePane.getChildren().remove(stickRct);
-                });
-
-                pause2.play();
-
-                PauseTransition pause3 = new PauseTransition(Duration.seconds(2));
-                pause3.setOnFinished(event3 -> {
-                    pillar2.setLayoutX(pillar1.getLayoutX());
-                    pillar1 = pillar2;
-                    scenePane.getChildren().remove(pillar2);
-                    scenePane.getChildren().add(pillar1);
-                    stickmanTransition.setToX(pillar2.getLayoutX() - pillar2.getWidth()/2);
-                    stickmanTransition.play();
-                    stickRct = generate_stick();
-                    stickRct.setLayoutX(pillar1.getLayoutX() + pillar1.getWidth());
-                    stickRct.setLayoutY(190);
-                    scenePane.getChildren().add(stickRct);
-
-                    generateNewPillar2();
-
-
-                });
-
-                pause3.play();
-            }
-
-            else {
-                // Bring stick man to y = 0 through animation
-                stickmanTransition.setToX(stickmanImageView.getX() + stickRct.getHeight());
-                stickmanTransition.setToY(350);
-                stickmanTransition.play();
-            }
-        });
-
-        // Start the pause
-        pause.play();
-    }
-
-    private void generateNewPillar2() {
-        // Generate a new pillar2 in the same way as in the start method
-        pillar2 = new Rectangle(generateRandomNumber(30, 100), 100, Color.BLACK);
-        pillar2.setLayoutX(generateRandomNumber(200, 400));
-        pillar2.setLayoutY(300);
-
-        // Add the new pillar2 to the scene
-        scenePane.getChildren().add(pillar2);
-    }
-
-
-    private Rectangle generate_stick(){
-        Rectangle stickRct = new Rectangle(7.5, 100, Color.WHITE);
-        stickRct.setLayoutX(pillar1.getLayoutX() + pillar1.getWidth());
-        stickRct.setLayoutY(190);
-
-        scale = new ScaleTransition(Duration.millis(4000), stickRct);
-        scale.setFromY(1.0);
-        scale.setToY(2.0);
-
-        // Set the pivot point to the bottom of the rectangle using a Rotate transform
-        Rotate rotateTransform = new Rotate();
-
-//            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
-//            rotateTransform.pivotXProperty().bind(rct.layoutXProperty().add(rct.widthProperty()));
-        rotateTransform.setPivotX(stickRct.getX());
-        rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
-        stickRct.getTransforms().add(rotateTransform);
-        return stickRct;
-    }
-
-
-
-
-
     public static void main(String[] args) {
         launch(args);
     }

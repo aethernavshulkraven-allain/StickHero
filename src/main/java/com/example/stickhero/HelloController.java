@@ -17,7 +17,7 @@ public class HelloController {
     private Parent root;
 
     public void toHomeScreen(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("homeScreen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("play_menu3.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -25,7 +25,7 @@ public class HelloController {
     }
 
     public void toGameplay(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("play_menu.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("play_menu2.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);

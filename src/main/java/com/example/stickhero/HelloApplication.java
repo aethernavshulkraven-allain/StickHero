@@ -15,7 +15,7 @@ public class HelloApplication extends Application {
 //            ViewManager manager = new ViewManager();
 //            stage = manager.getMainStage();
 //            stage.show();
-            Parent root = FXMLLoader.load(getClass().getResource("homeScreen.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("play_menu3.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
