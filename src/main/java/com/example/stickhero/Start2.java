@@ -64,6 +64,8 @@ public class Start2 extends Application {
     private TranslateTransition t;
 
     private TranslateTransition stickmanTransitionQuick;
+
+    private TranslateTransition stickTransition;
     private TranslateTransition pillar1Transition;
     private TranslateTransition pillar2Transition;
 
@@ -94,7 +96,6 @@ public class Start2 extends Application {
     public static Pane scenePane;
     private int start_x = 75;
 
-
     //stickman
     public Image stickmanImage = new Image(getClass().getResourceAsStream("0x0ss-85BackgroundRemoved.png"));
     public ImageView stickmanImageView = new ImageView(stickmanImage);
@@ -110,16 +111,14 @@ public class Start2 extends Application {
 
             //generate random pillars
             //Pair<Double, Double> pillar1Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
-            pillar1 = new Rectangle(generateRandomNumber(70, 150), 200, Color.BLACK);
+            pillar1 = new Rectangle(generateRandomNumber(50, 70), 200, Color.RED);
             pillar1.setLayoutX(20);
             pillar1.setLayoutY(500);
 
             //Pair<Double, Double> pillar2Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
-            pillar2 = new Rectangle(generateRandomNumber(70, 200), 200, Color.BLUE);
-            pillar2.setLayoutX(generateRandomNumber(150, 270));
+            pillar2 = new Rectangle(generateRandomNumber(50, 70), 200, Color.BLUE);
+            pillar2.setLayoutX(generateRandomNumber(270, 320));
             pillar2.setLayoutY(500);
-
-
 
             scale = new ScaleTransition(Duration.millis(4000), stickRct);
             scale.setFromY(1.0);
@@ -146,6 +145,7 @@ public class Start2 extends Application {
             scenePane.getChildren().add(stickmanImageView);
 
             stickmanTransition = new TranslateTransition(Duration.seconds(2), stickmanImageView);
+            stickTransition = new TranslateTransition(Duration.seconds(2), stickRct);
             stickmanTransitionQuick = new TranslateTransition(Duration.seconds(0), stickmanImageView);
             pillar1Transition = new TranslateTransition(Duration.seconds(2), pillar1);
             pillar2Transition = new TranslateTransition(Duration.seconds(2), pillar2);
@@ -198,6 +198,10 @@ public class Start2 extends Application {
                 new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
                 new KeyFrame(Duration.seconds(2), new KeyValue(rotateTransform.angleProperty(), 90)));
 
+        timeline1.setOnFinished(event5 -> {
+            timeline1.stop();
+        });
+
         timeline1.play();
 
         PauseTransition pause = new PauseTransition(Duration.seconds(2));
@@ -209,29 +213,46 @@ public class Start2 extends Application {
                 // Move stick man to pillar2 through animation
                 double targetX = stickmanImageView.getLayoutX()+stickRct.getHeight();
                 stickmanTransition.setToX(targetX);
+//                if (stickmanTransition.getStatus() == Animation.Status.RUNNING) {
+//                    stickmanTransition.stop();
+//                }
+
+                stickmanTransition.setOnFinished(event4 -> {
+                    stickmanTransition.stop();
+                });
+
                 stickmanTransition.play();
 
                 PauseTransition pause2 = new PauseTransition(Duration.seconds(2));
                 pause2.setOnFinished(event2 -> {
-//                    scenePane.getChildren().remove(pillar1);
-                    stickmanTransition.setToX(20);
-                    pillar2Transition.setToX(20);
-                    pillar2Transition.play();
+                    pillar1Transition.setToX(-500);
+                    stickTransition.setToX(-500);
+                    ParallelTransition moveOutGroup = new ParallelTransition(pillar1Transition, stickTransition);
 
-                    stickmanTransition.play();
-                    scenePane.getChildren().remove(stickRct);
+                    moveOutGroup.setOnFinished(event6 -> {
+                        moveOutGroup.stop();
+                    });
+
+                    moveOutGroup.play();
                 });
 
                 pause2.play();
 
                 PauseTransition pause3 = new PauseTransition(Duration.seconds(2));
                 pause3.setOnFinished(event3 -> {
-                    pillar2.setLayoutX(pillar1.getLayoutX());
+                    pillar2.setLayoutX(20); // TO BE SEEN WHY PILLAR2 NOT MOVING LEFTWARDS
+                    pillar2Transition.setToX(+20);
+                    stickmanTransition.setToX(+20);
+                    ParallelTransition moveLeftGroup = new ParallelTransition(pillar2Transition, stickmanTransition);
+
+                    moveLeftGroup.setOnFinished(event7 -> {
+                        moveLeftGroup.stop();
+                    });
+
+                    moveLeftGroup.play();
                     pillar1 = pillar2;
                     scenePane.getChildren().remove(pillar2);
                     scenePane.getChildren().add(pillar1);
-                    stickmanTransition.setToX(pillar2.getLayoutX() - pillar2.getWidth()/2);
-                    stickmanTransition.play();
                     stickRct = generate_stick();
 
                     scenePane.getChildren().add(stickRct);
@@ -248,6 +269,14 @@ public class Start2 extends Application {
                 // Bring stick man to y = 0 through animation
                 double targetX = stickRct.getHeight();
                 stickmanTransition.setToX(targetX);
+//                if (stickmanTransition.getStatus() == Animation.Status.RUNNING) {
+//                    stickmanTransition.stop();
+//                }
+
+                stickmanTransition.setOnFinished(event8 -> {
+                    stickmanTransition.stop();
+                });
+
                 stickmanTransition.play();
 //                stickmanTransition.setToX(stickmanImageView.getX() + stickRct.getHeight());
                 stickmanTransition.setToY(350);
@@ -262,8 +291,8 @@ public class Start2 extends Application {
 
     private void generateNewPillar2() {
 
-        pillar2 = new Rectangle(generateRandomNumber(70, 200), 200, Color.BLACK);
-        pillar2.setLayoutX(generateRandomNumber(150, 270));
+        pillar2 = new Rectangle(generateRandomNumber(30, 70), 200, Color.BLACK);
+        pillar2.setLayoutX(generateRandomNumber(250, 320));
         pillar2.setLayoutY(500);
 
         // Add the new pillar2 to the scene
