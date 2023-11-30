@@ -73,6 +73,8 @@ public class Start2 extends Application {
 
     public Rectangle pillar1;
     public Rectangle pillar2;
+
+    public int pillar2HasCherry = 0;
     private static double minPillarWidth = 50;
 
     private static double maxPillarWidth = 100;
@@ -100,6 +102,11 @@ public class Start2 extends Application {
     public Image stickmanImage = new Image(getClass().getResourceAsStream("0x0ss-85BackgroundRemoved.png"));
     public ImageView stickmanImageView = new ImageView(stickmanImage);
 
+    public Image cherryImage = new Image(getClass().getResourceAsStream("590774.png"));
+    public ImageView cherryImageView = new ImageView(cherryImage);
+
+    public static ArrayList<Double> cherryLocations = new ArrayList<Double>();
+
     public Timeline timeline1;
     private double rotationPivotY = 0;
 
@@ -126,12 +133,12 @@ public class Start2 extends Application {
 
             // Set the pivot point to the bottom of the rectangle using a Rotate transform
 
+            start_x = 75;
 
             //fitHeight="47.0" fitWidth="57.0"
             stickmanImageView.setFitHeight(47.0);
             stickmanImageView.setFitWidth(57.0);
             stickmanImageView.setLayoutX(pillar1.getLayoutX());
-            start_x = 75;
             stickmanImageView.setLayoutY(500-stickmanImageView.getFitHeight());
 
             stickRct = new Rectangle(7.5, 1, Color.WHITE);
@@ -183,8 +190,6 @@ public class Start2 extends Application {
         // Add other key handling as needed
     }
 
-
-
     private void handleKeyReleased(KeyEvent keyEvent) {
         scale.stop();
         Rotate rotateTransform = new Rotate();
@@ -197,10 +202,6 @@ public class Start2 extends Application {
         timeline1 = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
                 new KeyFrame(Duration.seconds(2), new KeyValue(rotateTransform.angleProperty(), 90)));
-
-        timeline1.setOnFinished(event5 -> {
-            timeline1.stop();
-        });
 
         timeline1.play();
 
@@ -218,10 +219,14 @@ public class Start2 extends Application {
 //                }
 
                 stickmanTransition.setOnFinished(event4 -> {
-                    stickmanTransition.stop();
+                    if (stickmanTransition.getStatus() == Animation.Status.RUNNING) {
+                        stickmanTransition.stop();
+                    }
                 });
 
                 stickmanTransition.play();
+                // when stickman animation is going on that is stickman is moving from pillar1 to pillar2
+                //if pillar2HasCherry = 1 then delete the cherry when stickman passes through it during the animation
 
                 PauseTransition pause2 = new PauseTransition(Duration.seconds(2));
                 pause2.setOnFinished(event2 -> {
@@ -230,7 +235,7 @@ public class Start2 extends Application {
                     ParallelTransition moveOutGroup = new ParallelTransition(pillar1Transition, stickTransition);
 
                     moveOutGroup.setOnFinished(event6 -> {
-                        moveOutGroup.stop();
+                        if (moveOutGroup.getStatus() == Animation.Status.RUNNING) moveOutGroup.stop();
                     });
 
                     moveOutGroup.play();
@@ -246,7 +251,7 @@ public class Start2 extends Application {
                     ParallelTransition moveLeftGroup = new ParallelTransition(pillar2Transition, stickmanTransition);
 
                     moveLeftGroup.setOnFinished(event7 -> {
-                        moveLeftGroup.stop();
+                        if (moveLeftGroup.getStatus() == Animation.Status.RUNNING) moveLeftGroup.stop();
                     });
 
                     moveLeftGroup.play();
@@ -274,7 +279,7 @@ public class Start2 extends Application {
 //                }
 
                 stickmanTransition.setOnFinished(event8 -> {
-                    stickmanTransition.stop();
+                    if (stickmanTransition.getStatus() == Animation.Status.RUNNING) stickmanTransition.stop();
                 });
 
                 stickmanTransition.play();
@@ -287,6 +292,25 @@ public class Start2 extends Application {
 
         // Start the pause
         pause.play();
+
+        timeline1.setOnFinished(event5 -> {
+            if (pillar2HasCherry == 1) {
+                if (stickRct.getBoundsInParent().intersects(cherryImageView.getBoundsInParent())) {
+                    // Remove cherry from the scene
+                    scenePane.getChildren().remove(cherryImageView);
+                    pillar2HasCherry = 0; // Reset cherry flag
+                }
+            }
+
+            if (timeline1.getStatus() == Animation.Status.RUNNING) timeline1.stop();
+
+        });
+
+    }
+
+    private static int cherryOccurs() {
+        Random random = new Random();
+        return random.nextInt(2);
     }
 
     private void generateNewPillar2() {
@@ -294,6 +318,22 @@ public class Start2 extends Application {
         pillar2 = new Rectangle(generateRandomNumber(30, 70), 200, Color.BLACK);
         pillar2.setLayoutX(generateRandomNumber(250, 320));
         pillar2.setLayoutY(500);
+
+        //see if cherry is there
+        int cherryFlag = 1; // cherryOccurs();
+        if(cherryFlag == 1){
+            //fitHeight="47.0" fitWidth="57.0"
+            cherryImageView.setFitHeight(46.0);
+            cherryImageView.setFitWidth(39.0);
+            cherryImageView.setLayoutX(generateRandomNumber(100, 240));
+            cherryImageView.setLayoutY(pillar2.getLayoutY()- cherryImageView.getFitHeight());
+            scenePane.getChildren().add(cherryImageView);
+
+            cherryLocations.add(cherryImageView.getLayoutX());
+            pillar2HasCherry = 1;
+        }else {
+            pillar2HasCherry = 0;
+        }
 
         // Add the new pillar2 to the scene
         scenePane.getChildren().add(pillar2);
