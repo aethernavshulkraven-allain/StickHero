@@ -58,9 +58,19 @@ public class Start2 extends Application {
 
     private Set<KeyCode> pressedKeys = new HashSet<>();
     private ScaleTransition scale;
+    PauseTransition pause3 ;
+    public double d;
 
     private RotateTransition rotate;
     private TranslateTransition stickmanTransition;
+
+    private Rectangle pillar3;
+    private TranslateTransition pillar3Transition;
+
+    public Rectangle getPillar3() {
+        return pillar3;
+    }
+
     private TranslateTransition t;
 
     private TranslateTransition stickmanTransitionQuick;
@@ -70,11 +80,10 @@ public class Start2 extends Application {
     private TranslateTransition pillar2Transition;
 
     public Rectangle stickRct;
+    public Rectangle tempRct;
 
     public Rectangle pillar1;
     public Rectangle pillar2;
-
-    public int pillar2HasCherry = 0;
     private static double minPillarWidth = 50;
 
     private static double maxPillarWidth = 100;
@@ -102,11 +111,6 @@ public class Start2 extends Application {
     public Image stickmanImage = new Image(getClass().getResourceAsStream("0x0ss-85BackgroundRemoved.png"));
     public ImageView stickmanImageView = new ImageView(stickmanImage);
 
-    public Image cherryImage = new Image(getClass().getResourceAsStream("590774.png"));
-    public ImageView cherryImageView = new ImageView(cherryImage);
-
-    public static ArrayList<Double> cherryLocations = new ArrayList<Double>();
-
     public Timeline timeline1;
     private double rotationPivotY = 0;
 
@@ -133,12 +137,12 @@ public class Start2 extends Application {
 
             // Set the pivot point to the bottom of the rectangle using a Rotate transform
 
-            start_x = 75;
 
             //fitHeight="47.0" fitWidth="57.0"
             stickmanImageView.setFitHeight(47.0);
             stickmanImageView.setFitWidth(57.0);
             stickmanImageView.setLayoutX(pillar1.getLayoutX());
+            start_x = 75;
             stickmanImageView.setLayoutY(500-stickmanImageView.getFitHeight());
 
             stickRct = new Rectangle(7.5, 1, Color.WHITE);
@@ -182,16 +186,20 @@ public class Start2 extends Application {
 
         if (pressedKeys.contains(KeyCode.A)) {
             // Increase the height and adjust the Y position
-            double newHeight = stickRct.getHeight() + 5;
-            double newY = stickRct.getY() - 5;
+            double newHeight = stickRct.getHeight() + 10;
+            double newY = stickRct.getY() - 10;
             stickRct.setHeight(newHeight);
             stickRct.setY(newY);
         }
         // Add other key handling as needed
     }
 
+
+
     private void handleKeyReleased(KeyEvent keyEvent) {
         scale.stop();
+
+
         Rotate rotateTransform = new Rotate();
 
 //            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
@@ -203,8 +211,14 @@ public class Start2 extends Application {
                 new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
                 new KeyFrame(Duration.seconds(2), new KeyValue(rotateTransform.angleProperty(), 90)));
 
+        timeline1.setOnFinished(event5 -> {
+            timeline1.stop();
+        });
+
         timeline1.play();
 
+
+//
         PauseTransition pause = new PauseTransition(Duration.seconds(2));
 
         // Set the action to be performed after the pause
@@ -212,62 +226,99 @@ public class Start2 extends Application {
             // Check if stickRct falls on pillar2 from pillar1
             if (stickRct.getHeight() + stickRct.getLayoutX() >= pillar2.getLayoutX() && stickRct.getHeight() + stickRct.getLayoutX() <= pillar2.getLayoutX() + pillar2.getWidth()) {
                 // Move stick man to pillar2 through animation
+                pillar3 = generateNewPillar3();
+                scenePane.getChildren().add(pillar3);
+
+                pillar3Transition = new TranslateTransition(Duration.seconds(2), pillar3);
+
                 double targetX = stickmanImageView.getLayoutX()+stickRct.getHeight();
                 stickmanTransition.setToX(targetX);
-//                if (stickmanTransition.getStatus() == Animation.Status.RUNNING) {
+//                if (stickmanTransition.getStatus() == Animation.Status.RUNNING)  {
 //                    stickmanTransition.stop();
 //                }
 
-                stickmanTransition.setOnFinished(event4 -> {
-                    if (stickmanTransition.getStatus() == Animation.Status.RUNNING) {
-                        stickmanTransition.stop();
-                    }
-                });
+
 
                 stickmanTransition.play();
-                // when stickman animation is going on that is stickman is moving from pillar1 to pillar2
-                //if pillar2HasCherry = 1 then delete the cherry when stickman passes through it during the animation
 
                 PauseTransition pause2 = new PauseTransition(Duration.seconds(2));
-                pause2.setOnFinished(event2 -> {
-                    pillar1Transition.setToX(-500);
-                    stickTransition.setToX(-500);
-                    ParallelTransition moveOutGroup = new ParallelTransition(pillar1Transition, stickTransition);
-
-                    moveOutGroup.setOnFinished(event6 -> {
-                        if (moveOutGroup.getStatus() == Animation.Status.RUNNING) moveOutGroup.stop();
-                    });
-
-                    moveOutGroup.play();
-                });
-
                 pause2.play();
+                pause2.setOnFinished(event2 -> {
+                    System.out.println(pillar2.getLayoutX());
+                    pillar3Transition.setByX(-200);
+                    stickmanTransition.setToX(pillar1.getLayoutX());
+                    d =-(pillar2.getLayoutX()-pillar1.getLayoutX());
+                    pillar2Transition.setByX(-(pillar2.getLayoutX()-pillar1.getLayoutX()));
+//                    pillar2Transition.setToX(-1000);
 
-                PauseTransition pause3 = new PauseTransition(Duration.seconds(2));
-                pause3.setOnFinished(event3 -> {
-                    pillar2.setLayoutX(20); // TO BE SEEN WHY PILLAR2 NOT MOVING LEFTWARDS
-                    pillar2Transition.setToX(+20);
-                    stickmanTransition.setToX(+20);
-                    ParallelTransition moveLeftGroup = new ParallelTransition(pillar2Transition, stickmanTransition);
-
-                    moveLeftGroup.setOnFinished(event7 -> {
-                        if (moveLeftGroup.getStatus() == Animation.Status.RUNNING) moveLeftGroup.stop();
+                    pillar1Transition.setToX(-(pillar2.getLayoutX()));
+                    stickTransition.setToX(pillar1.getLayoutX()-(pillar2.getLayoutX()+pillar1.getLayoutX()));
+                    pillar2Transition.play();
+                    pillar2Transition.setOnFinished(event5 ->{
+                        System.out.println(pillar2.getLayoutX());
                     });
+                    pillar3Transition.play();
+                    pillar1Transition.play();
+                    stickmanTransition.play();
+                    stickTransition.play();
+                    System.out.println(pillar2.getLayoutX());
 
-                    moveLeftGroup.play();
-                    pillar1 = pillar2;
-                    scenePane.getChildren().remove(pillar2);
-                    scenePane.getChildren().add(pillar1);
-                    stickRct = generate_stick();
-
-                    scenePane.getChildren().add(stickRct);
-
-                    generateNewPillar2();
-
+                    ParallelTransition moveOutGroup = new ParallelTransition(pillar1Transition, stickTransition,pillar2Transition,stickmanTransition);
+//                    moveOutGroup.
+                    moveOutGroup.play();
 
                 });
 
+                pause3 = new PauseTransition(Duration.seconds(2));
+
+
+//
+
+//                pause3.setOnFinished(event6->{
+//                    System.out.println("HI");
+//                    System.out.println(pillar1.getLayoutX());
+////                    pillar2.setX(d);
+//
+//                    System.out.println(pillar2.getLayoutX());
+////                    pillar2.setX(-(pillar2.getLayoutX()-pillar1.getLayoutX()));
+//                    pillar1 = pillar2;
+//                    System.out.println(pillar1.getLayoutX());
+//
+//                    scenePane.getChildren().remove(pillar2);
+//                    pillar2 = generateNewPillar2();
+//                    scenePane.getChildren().add(pillar2);
+//                    tempRct = stickRct;
+////                    scenePane.getChildren().remove(stickRct);
+//                    stickRct = generate_stick();
+//                    scenePane.getChildren().add(stickRct);
+//
+//
+//                });
                 pause3.play();
+//                pause3.setOnFinished(event3 -> {
+//                    pillar2.setLayoutX(20); // TO BE SEEN WHY PILLAR2 NOT MOVING LEFTWARDS
+//                    pillar2Transition.setToX(20);
+//                    stickmanTransition.setToX(20);
+//                    ParallelTransition moveLeftGroup = new ParallelTransition(pillar2Transition, stickmanTransition);
+//
+//                    moveLeftGroup.setOnFinished(event7 -> {
+//                        moveLeftGroup.stop();
+//                    });
+//
+//                    moveLeftGroup.play();
+//                    pillar1 = pillar2;
+//                    scenePane.getChildren().remove(pillar2);
+//                    scenePane.getChildren().add(pillar1);
+//                    stickRct = generate_stick();
+//
+//                    scenePane.getChildren().add(stickRct);
+//
+//                    generateNewPillar2();
+//
+//
+//                });
+//
+//                pause3.play();
             }
 
             else {
@@ -279,7 +330,7 @@ public class Start2 extends Application {
 //                }
 
                 stickmanTransition.setOnFinished(event8 -> {
-                    if (stickmanTransition.getStatus() == Animation.Status.RUNNING) stickmanTransition.stop();
+                    stickmanTransition.stop();
                 });
 
                 stickmanTransition.play();
@@ -292,51 +343,29 @@ public class Start2 extends Application {
 
         // Start the pause
         pause.play();
-
-        timeline1.setOnFinished(event5 -> {
-            if (pillar2HasCherry == 1) {
-                if (stickRct.getBoundsInParent().intersects(cherryImageView.getBoundsInParent())) {
-                    // Remove cherry from the scene
-                    scenePane.getChildren().remove(cherryImageView);
-                    pillar2HasCherry = 0; // Reset cherry flag
-                }
-            }
-
-            if (timeline1.getStatus() == Animation.Status.RUNNING) timeline1.stop();
-
-        });
-
     }
 
-    private static int cherryOccurs() {
-        Random random = new Random();
-        return random.nextInt(2);
-    }
+    private Rectangle generateNewPillar2() {
 
-    private void generateNewPillar2() {
-
-        pillar2 = new Rectangle(generateRandomNumber(30, 70), 200, Color.BLACK);
-        pillar2.setLayoutX(generateRandomNumber(250, 320));
-        pillar2.setLayoutY(500);
-
-        //see if cherry is there
-        int cherryFlag = 1; // cherryOccurs();
-        if(cherryFlag == 1){
-            //fitHeight="47.0" fitWidth="57.0"
-            cherryImageView.setFitHeight(46.0);
-            cherryImageView.setFitWidth(39.0);
-            cherryImageView.setLayoutX(generateRandomNumber(100, 240));
-            cherryImageView.setLayoutY(pillar2.getLayoutY()- cherryImageView.getFitHeight());
-            scenePane.getChildren().add(cherryImageView);
-
-            cherryLocations.add(cherryImageView.getLayoutX());
-            pillar2HasCherry = 1;
-        }else {
-            pillar2HasCherry = 0;
-        }
+        Rectangle pp = new Rectangle(generateRandomNumber(30, 70), 200, Color.BLACK);
+        pp.setLayoutX(generateRandomNumber(250, 320));
+        pp.setLayoutY(500);
+        return pp;
 
         // Add the new pillar2 to the scene
-        scenePane.getChildren().add(pillar2);
+//        scenePane.getChildren().add(pillar2);
+    }
+
+    private Rectangle generateNewPillar3() {
+
+        Rectangle pp = new Rectangle(generateRandomNumber(30, 70), 200, Color.BLACK);
+        pp.setLayoutX(440+pp.getWidth());
+        pp.setLayoutY(500);
+
+        return pp;
+
+        // Add the new pillar2 to the scene
+//        scenePane.getChildren().add(pillar2);
     }
 
 
