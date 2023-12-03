@@ -79,6 +79,9 @@ public class Start2 extends Application {
     private TranslateTransition pillar1Transition;
     private TranslateTransition pillar2Transition;
 
+    public boolean flag1 = false;
+
+
     public Rectangle stickRct;
     public Rectangle tempRct;
 
@@ -262,10 +265,9 @@ public class Start2 extends Application {
                     stickmanTransition.play();
                     stickTransition.play();
                     System.out.println(pillar2.getLayoutX());
-
-                    ParallelTransition moveOutGroup = new ParallelTransition(pillar1Transition, stickTransition,pillar2Transition,stickmanTransition);
-//                    moveOutGroup.
-                    moveOutGroup.play();
+                    pillar3Transition.setOnFinished(event7->{
+                        flag1 = true;
+                    });
 
                 });
 
@@ -274,8 +276,18 @@ public class Start2 extends Application {
 
 //
 
-//                pause3.setOnFinished(event6->{
-//                    System.out.println("HI");
+                pause3.setOnFinished(event6->{
+//                    while (flag1 == false){
+//
+//                    }
+                    System.out.println("HI");
+                    tempRct = generate_stick();
+                    scenePane.getChildren().add(tempRct);
+                    Rectangle extra = tempRct;
+                    tempRct = stickRct;
+                    stickRct = extra;
+
+
 //                    System.out.println(pillar1.getLayoutX());
 ////                    pillar2.setX(d);
 //
@@ -293,7 +305,7 @@ public class Start2 extends Application {
 //                    scenePane.getChildren().add(stickRct);
 //
 //
-//                });
+                });
                 pause3.play();
 //                pause3.setOnFinished(event3 -> {
 //                    pillar2.setLayoutX(20); // TO BE SEEN WHY PILLAR2 NOT MOVING LEFTWARDS
