@@ -1,55 +1,27 @@
 package com.example.stickhero;
 import javafx.animation.*;
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
-import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import javafx.util.Pair;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-
-import javafx.util.Duration;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.System.exit;
 
@@ -58,7 +30,6 @@ public class Start2 extends Application {
 
     private Set<KeyCode> pressedKeys = new HashSet<>();
     private ScaleTransition scale;
-    PauseTransition pause3 ;
     public double d;
 
     private RotateTransition rotate;
@@ -125,12 +96,12 @@ public class Start2 extends Application {
 
             //generate random pillars
             //Pair<Double, Double> pillar1Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
-            pillar1 = new Rectangle(generateRandomNumber(50, 70), 200, Color.RED);
-            pillar1.setLayoutX(20);
+            pillar1 = new Rectangle(generateRandomNumber(70, 100), 200, Color.RED);
+            pillar1.setLayoutX(0);
             pillar1.setLayoutY(500);
 
             //Pair<Double, Double> pillar2Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
-            pillar2 = new Rectangle(generateRandomNumber(50, 70), 200, Color.BLUE);
+            pillar2 = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLUE);
             pillar2.setLayoutX(generateRandomNumber(270, 320));
             pillar2.setLayoutY(500);
 
@@ -199,6 +170,8 @@ public class Start2 extends Application {
 
 
 
+
+
     private void handleKeyReleased(KeyEvent keyEvent) {
         scale.stop();
 
@@ -214,79 +187,106 @@ public class Start2 extends Application {
                 new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
                 new KeyFrame(Duration.seconds(2), new KeyValue(rotateTransform.angleProperty(), 90)));
 
-        timeline1.setOnFinished(event5 -> {
-            timeline1.stop();
-        });
-
         timeline1.play();
+        timeline1.setOnFinished(event5 -> {
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.play();
+            // Set the action to be performed after the pause
+            pause.setOnFinished(event -> {
+                // Check if stickRct falls on pillar2 from pillar1
+                if (stickRct.getHeight() <= pillar2.getLayoutX() + pillar2.getWidth() - (pillar1.getLayoutX() + pillar1.getWidth()) || stickRct.getHeight() >= pillar2.getLayoutX() - (pillar1.getLayoutX() + pillar1.getWidth())) {
+                    // Move stick man to pillar2 through animation
+                    System.out.println("===================ENTERING=================");
+                    System.out.println("Entering with pillar1 at - "+pillar1.getLayoutX());
+                    System.out.println("Entering with pillar2 at - "+pillar2.getLayoutX());
 
+                    pillar3 = generateNewPillar3();
+//                scenePane.getChildren().add(pillar3);
 
-//
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+                    pillar3Transition = new TranslateTransition(Duration.seconds(2), pillar3);
 
-        // Set the action to be performed after the pause
-        pause.setOnFinished(event -> {
-            // Check if stickRct falls on pillar2 from pillar1
-            if (stickRct.getHeight() + stickRct.getLayoutX() >= pillar2.getLayoutX() && stickRct.getHeight() + stickRct.getLayoutX() <= pillar2.getLayoutX() + pillar2.getWidth()) {
-                // Move stick man to pillar2 through animation
-                pillar3 = generateNewPillar3();
-                scenePane.getChildren().add(pillar3);
-
-                pillar3Transition = new TranslateTransition(Duration.seconds(2), pillar3);
-
-                double targetX = stickmanImageView.getLayoutX()+stickRct.getHeight();
-                stickmanTransition.setToX(targetX);
+                    double targetX = stickmanImageView.getLayoutX()+stickRct.getHeight();
+                    stickmanTransition.setToX(targetX);
 //                if (stickmanTransition.getStatus() == Animation.Status.RUNNING)  {
 //                    stickmanTransition.stop();
 //                }
 
 
 
-                stickmanTransition.play();
-
-                PauseTransition pause2 = new PauseTransition(Duration.seconds(2));
-                pause2.play();
-                pause2.setOnFinished(event2 -> {
-                    System.out.println(pillar2.getLayoutX());
-                    pillar3Transition.setByX(-200);
-                    stickmanTransition.setToX(pillar1.getLayoutX());
-                    d =-(pillar2.getLayoutX()-pillar1.getLayoutX());
-                    pillar2Transition.setByX(-(pillar2.getLayoutX()-pillar1.getLayoutX()));
-//                    pillar2Transition.setToX(-1000);
-
-                    pillar1Transition.setToX(-(pillar2.getLayoutX()));
-                    stickTransition.setToX(pillar1.getLayoutX()-(pillar2.getLayoutX()+pillar1.getLayoutX()));
-                    pillar2Transition.play();
-                    pillar2Transition.setOnFinished(event5 ->{
-                        System.out.println(pillar2.getLayoutX());
-                    });
-                    pillar3Transition.play();
-                    pillar1Transition.play();
                     stickmanTransition.play();
-                    stickTransition.play();
-                    System.out.println(pillar2.getLayoutX());
-                    pillar3Transition.setOnFinished(event7->{
-                        flag1 = true;
-                    });
 
-                });
+                    PauseTransition pause2 = new PauseTransition(Duration.seconds(2));
+                    PauseTransition pause3 = new PauseTransition(Duration.seconds(2));
 
-                pause3 = new PauseTransition(Duration.seconds(2));
+                    pause2.play();
+                    Double p1x = (double) 0;
+                    pause2.setOnFinished(event2 -> {
+//                    System.out.println(pillar2.getLayoutX());
+                        double p2x = pillar2.getLayoutX();
+                        pillar2.setLayoutX(generateRandomNumber(250, 320));
+                        pillar1.setLayoutX(0);
+                        pillar3Transition.setByX(-pillar2.getLayoutX());
+                        stickmanTransition.setToX(p1x);
+                        pillar2Transition.setByX(-p2x);
 
+                        pillar1Transition.setByX(-300);
+                        System.out.println(scenePane.getChildren());
+                        stickTransition.setByX(p1x -(pillar2.getLayoutX()+p1x) - stickRct.getHeight());
+                        pillar2Transition.play();
+                        pillar2Transition.setOnFinished(eventp2move ->{
+                            System.out.println("moved p2");
+                            //pillar2.setFill(Color.GREEN);
+                        });
+                        pillar3Transition.play();
+                        pillar1Transition.play();
+                        stickmanTransition.play();
+                        stickTransition.play();
+                        stickTransition.setOnFinished(sttransev -> {
+                            stickRct.setFill(Color.BLACK);
+                        });
+//                        System.out.println("in transit ----------");
+//                        System.out.println(pillar2.getLayoutX());
+//                        pillar1.layoutXProperty().addListener((observable, oldValue, newValue) -> {
+//                            System.out.println("Current layout of pillar1: " + newValue);
+//                        });
 
+                        pillar3Transition.setOnFinished(event7->{
+                            //pillar3.setLayoutX(pillar2.getLayoutX());
+                            System.out.println("p3: " + pillar3.getLayoutX());
+                            flag1 = true;
+                        });
+                        pause3.play();
+                        pause3.setOnFinished(event6->{
+                            System.out.println("HI");
+                            System.out.println("Before -------------");
+                            System.out.println(pillar1.getLayoutX());
+                            System.out.println(pillar2.getLayoutX());
+                            System.out.println(pillar3.getLayoutX());
+
+//                            p1x.set(pillar1.getLayoutX());
+                            scenePane.getChildren().remove(pillar1);
+                            pillar1 = pillar2;
+                            pillar2 = pillar3;
+//                            pillar3 = null;
+
+                            pillar1.setFill(Color.GREEN);
+                            pillar2.setFill(Color.YELLOW);
 //
+                            scenePane.getChildren().remove(stickRct);
+                            stickRct = generate_stick();
+                            scenePane.getChildren().add(stickRct);
+//                    Rectangle extra = tempRct;
+//                    tempRct = stickRct;
+//                    stickRct = extra;
+//                    scenePane.getChildren().remove(tempRct);
 
-                pause3.setOnFinished(event6->{
-//                    while (flag1 == false){
-//
-//                    }
-                    System.out.println("HI");
-                    tempRct = generate_stick();
-                    scenePane.getChildren().add(tempRct);
-                    Rectangle extra = tempRct;
-                    tempRct = stickRct;
-                    stickRct = extra;
 
+                            System.out.println("Finals -------------");
+
+                            System.out.println(pillar1.getLayoutX());
+                            System.out.println(pillar2.getLayoutX());
+                            System.out.println(pillar3.getLayoutX());
+                            System.out.println("Finals ends-------------");
 
 //                    System.out.println(pillar1.getLayoutX());
 ////                    pillar2.setX(d);
@@ -305,8 +305,12 @@ public class Start2 extends Application {
 //                    scenePane.getChildren().add(stickRct);
 //
 //
-                });
-                pause3.play();
+                        });
+                    });
+
+
+
+
 //                pause3.setOnFinished(event3 -> {
 //                    pillar2.setLayoutX(20); // TO BE SEEN WHY PILLAR2 NOT MOVING LEFTWARDS
 //                    pillar2Transition.setToX(20);
@@ -331,30 +335,31 @@ public class Start2 extends Application {
 //                });
 //
 //                pause3.play();
-            }
+                }
 
-            else {
-                // Bring stick man to y = 0 through animation
-                double targetX = stickRct.getHeight();
-                stickmanTransition.setToX(targetX);
+                else {
+                    // Bring stick man to y = 0 through animation
+                    double targetX = stickRct.getHeight();
+                    stickmanTransition.setToX(targetX);
 //                if (stickmanTransition.getStatus() == Animation.Status.RUNNING) {
 //                    stickmanTransition.stop();
 //                }
 
-                stickmanTransition.setOnFinished(event8 -> {
-                    stickmanTransition.stop();
-                });
+                    stickmanTransition.setOnFinished(event8 -> {
+                        stickmanTransition.stop();
+                    });
 
-                stickmanTransition.play();
+                    stickmanTransition.play();
 //                stickmanTransition.setToX(stickmanImageView.getX() + stickRct.getHeight());
-                stickmanTransition.setToY(350);
-                stickmanTransition.play();
-                exit(1);
-            }
+                    stickmanTransition.setToY(350);
+                    stickmanTransition.play();
+                    exit(1);
+                }
+            });
         });
 
-        // Start the pause
-        pause.play();
+
+
     }
 
     private Rectangle generateNewPillar2() {
@@ -370,14 +375,15 @@ public class Start2 extends Application {
 
     private Rectangle generateNewPillar3() {
 
-        Rectangle pp = new Rectangle(generateRandomNumber(30, 70), 200, Color.BLACK);
+        Rectangle pp = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
         pp.setLayoutX(440+pp.getWidth());
         pp.setLayoutY(500);
+        scenePane.getChildren().add(pp);//
+
 
         return pp;
 
         // Add the new pillar2 to the scene
-//        scenePane.getChildren().add(pillar2);
     }
 
 
@@ -390,6 +396,7 @@ public class Start2 extends Application {
         scale = new ScaleTransition(Duration.millis(4000), stickRct);
         scale.setFromY(1.0);
         scale.setToY(2.0);
+        //scenePane.getChildren().add(stickRct);
 
         // Set the pivot point to the bottom of the rectangle using a Rotate transform
         Rotate rotateTransform = new Rotate();
@@ -435,3 +442,4 @@ public class Start2 extends Application {
         launch(args);
     }
 }
+
