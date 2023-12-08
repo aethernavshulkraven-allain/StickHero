@@ -28,6 +28,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -136,21 +137,44 @@ public class Start2 extends Application {
     public Stage myStage;
     private double rotationPivotY = 0;
 
+    public boolean canRotate = true;
+
+    public boolean increaseFlag = true;
+
+    public boolean game_lock = true;
+
+
+    public ImageView cherryView = new ImageView(cherryImage);
+
+
+    public Text cherryText;
+
+
+
+
+
 
     public void try_rotate(){
-        Rotate rotateTransform = new Rotate();
-        rotateTransform.setPivotX(stickRct.getX());
-        rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
-        stickRct.getTransforms().add(rotateTransform);
-        timeline1 = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
-                new KeyFrame(Duration.seconds(1.4), new KeyValue(rotateTransform.angleProperty(), 90)));
+        if(canRotate){
+            canRotate = false;
+            Rotate rotateTransform = new Rotate();
+            rotateTransform.setPivotX(stickRct.getX());
+            rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
+            stickRct.getTransforms().add(rotateTransform);
+            timeline1 = new Timeline(
+                    new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
+                    new KeyFrame(Duration.seconds(1.4), new KeyValue(rotateTransform.angleProperty(), 90)));
 
-        timeline1.setOnFinished(event5 -> {
-            timeline1.stop();
-        });
+            timeline1.setOnFinished(event5 -> {
+                timeline1.stop();
+            });
 
-        timeline1.play();
+            timeline1.play();
+
+        }else {
+
+        }
+
     }
 
 
@@ -161,10 +185,12 @@ public class Start2 extends Application {
                 stickmanImageView.setY(stickmanImageView.getBoundsInParent().getHeight()+stickRct.getWidth());
                 stickmanImageView.setRotate(180);
                 stickmanImageView.setScaleX(-1);
+                flip_flag = false;
             } else {
                 stickmanImageView.setY(0);  // Set the Y position to the top
                 stickmanImageView.setRotate(0);  // Reset rotation
                 stickmanImageView.setScaleX(1);
+                flip_flag = true;
                 // Reset scale
             }
         }else{
@@ -186,7 +212,6 @@ public class Start2 extends Application {
             pillar1.setX(0);
             pillar1.setLayoutY(500);
 
-            //Pair<Double, Double> pillar2Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
             pillar2 = new Rectangle(p2_width, 200, Color.BLACK);
             pillar2.setLayoutX(x2);
             pillar2.setLayoutY(500);
@@ -198,49 +223,39 @@ public class Start2 extends Application {
             pillar1.setX(0);
             pillar1.setLayoutY(500);
             score = 0;
-
-            //Pair<Double, Double> pillar2Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
             pillar2 = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
             pillar2.setLayoutX(generateRandomNumber(270, 320));
             pillar2.setLayoutY(500);
         }
+        cherryText = new Text();
+        cherryText.setText(String.valueOf(collectedCherryCount));
+        cherryText.setLayoutX(360);
+        cherryText.setLayoutY(50);
+        cherryText.setStyle("-fx-font: 26 arial;");
+
+
         counter = new Text();
         counter.setText(String.valueOf(score));
         counter.setLayoutY(100);
         counter.setLayoutX(200);
-//            Font font = (Font.loadFont("src/main/java/com/example/stickhero/kamikaze.3d-gradient-italic.ttf",24));
-//            counter.setFont(font);
+
+        scenePane.getChildren().add(cherryText);
+
         counter.setStyle("-fx-font: 48 arial;");
 
         scenePane.getChildren().add(counter);
-
-
-        //generate random pillars
-        //Pair<Double, Double> pillar1Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
-//        pillar1 = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
-//        pillar1.setX(0);
-//        pillar1.setLayoutY(500);
-//
-//        //Pair<Double, Double> pillar2Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
-//        pillar2 = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
-//        pillar2.setLayoutX(generateRandomNumber(270, 320));
-//        pillar2.setLayoutY(500);
 
         scale = new ScaleTransition(Duration.millis(4000), stickRct);
         scale.setFromY(1.0);
         scale.setToY(2.0);
 
-        // Set the pivot point to the bottom of the rectangle using a Rotate transform
-
-
-        //fitHeight="47.0" fitWidth="57.0"
         stickmanImageView.setFitHeight(30.0);
         stickmanImageView.setFitWidth(40);
-        stickmanImageView.setLayoutX(pillar1.getLayoutX());
+        stickmanImageView.setLayoutX(pillar1.getBoundsInParent().getMaxX()-stickmanImageView.getFitWidth());
         start_x = 75;
         stickmanImageView.setLayoutY(500-stickmanImageView.getFitHeight());
 
-        stickRct = new Rectangle(7.5, 1, Color.BLACK);
+        stickRct = new Rectangle(5, 1, Color.BLACK);
         stickRct.setLayoutX(stickmanImageView.getLayoutX()+stickmanImageView.getFitWidth()-5);
 
         stickRct.setLayoutY(stickmanImageView.getLayoutY()+stickmanImageView.getFitHeight());
@@ -255,9 +270,16 @@ public class Start2 extends Application {
     @Override
     public void start(Stage stage) {
         try {
+            game_lock = true;
 
             Parent root = FXMLLoader.load(getClass().getResource("play_menu3.fxml"));
             scenePane = new Pane(root);
+            cherryView.setLayoutX(370);
+            cherryView.setLayoutY(10);
+            cherryView.setFitHeight(35);
+            cherryView.setFitWidth(35);
+            scenePane.getChildren().add(cherryView);
+
             initializer(scenePane,saveCurrState);
 
 
@@ -289,21 +311,29 @@ public class Start2 extends Application {
     }
 
 
-    private boolean aKeyPressed = false;
-
-    private void handleKeyPressed(KeyEvent keyEvent) {
-        pressedKeys.add(keyEvent.getCode());
-
-        if (pressedKeys.contains(KeyCode.A)) {
+    public void tryIncrease(){
+        if(increaseFlag){
             double newHeight = stickRct.getHeight() + 10;
             double newY = stickRct.getY() - 10;
             stickRct.setHeight(newHeight);
             stickRct.setY(newY);
         }
-        else if (pressedKeys.contains(KeyCode.SPACE)) {
+    }
+
+    public boolean flip_flag = true;
+
+    private boolean aKeyPressed = false;
+
+    private void handleKeyPressed(KeyEvent keyEvent) {
+        KeyCode code = keyEvent.getCode();
+        pressedKeys.add(keyEvent.getCode());
+
+        if (code.equals(KeyCode.A)) {
+            tryIncrease();
+        }
+        else if (code.equals(KeyCode.SPACE)) {
             tryFlip();
         }
-        // Add other key handling as needed
     }
 
 
@@ -317,30 +347,14 @@ public class Start2 extends Application {
         KeyCode code = keyEvent.getCode();
         pressedKeys.remove(code);
 //
-        if (code == KeyCode.A) {
+        if (code == KeyCode.A && game_lock) {
             scale.stop();
             flag = false;
+            increaseFlag = false;
+            game_lock = false;
 
-
-//            rotateTransform.pivotYProperty().bind(rct.layoutYProperty().add(rct.heightProperty()));
-//            rotateTransform.pivotXProperty().bind(rct.layoutXProperty().add(rct.widthProperty()));
-            Rotate rotateTransform = new Rotate();
-            rotateTransform.setPivotX(stickRct.getX());
-            rotateTransform.setPivotY(stickRct.getY()+stickRct.getHeight()+stickRct.getWidth()/2);
-            stickRct.getTransforms().add(rotateTransform);
-            timeline1 = new Timeline(
-                    new KeyFrame(Duration.ZERO, new KeyValue(rotateTransform.angleProperty(), 0)),
-                    new KeyFrame(Duration.seconds(1.4), new KeyValue(rotateTransform.angleProperty(), 90)));
-
-            timeline1.setOnFinished(event5 -> {
-                timeline1.stop();
-            });
-
-            timeline1.play();
+            try_rotate();
             System.out.println("oye");
-
-
-//
             PauseTransition pause = new PauseTransition(Duration.seconds(1.4));
 
             // Set the action to be performed after the pause
@@ -385,20 +399,22 @@ public class Start2 extends Application {
                     KeyFrame k9  = new KeyFrame(Duration.seconds(2), new KeyValue(pillar3.layoutXProperty(), p2 ));
                     if (pillar2HasCherry == 1) {
                         KeyFrame kCherry = new KeyFrame(Duration.seconds(1.2), new KeyValue(cherryImageView.layoutXProperty(), cherryImageView.getLayoutX()));
-                        KeyFrame kCherry2 = new KeyFrame(Duration.seconds(2), new KeyValue(cherryImageView.layoutXProperty(),generateRandomNumber(100,200)));
+                        KeyFrame kCherry2 = new KeyFrame(Duration.seconds(2), new KeyValue(cherryImageView.layoutXProperty(),generateRandomNumber(pillar1.getBoundsInParent().getMaxX(),pillar2.getBoundsInParent().getMinX())));
                         timeline2.getKeyFrames().add(kCherry);
                         timeline2.getKeyFrames().add(kCherry2);
                         KeyFrame chkCollision = new KeyFrame(Duration.millis(8), cherryCollision -> {
                             System.out.println("Checking for collision");
                             Bounds cherryBounds = cherryImageView.getBoundsInParent();
-                            if (stickmanImageView.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageView.getLayoutX() >= cherryBounds.getMinX()) {
-                                System.out.println("Detected cherry");
+                            if (stickmanImageView.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageView.getLayoutX() >= cherryBounds.getMinX() ) {
+                                collectedCherryCount++;
+                                cherryText.setText(String.valueOf(collectedCherryCount));
+                                System.out.println("Detected cherry and Is flipped");
                                 collectedCherryCount += 1;
                                 scenePane.getChildren().remove(cherryImageView);
                                 System.out.println();
                             }
                         });
-                        timeline2.getKeyFrames().add(chkCollision);
+//                        timeline2.getKeyFrames().add(chkCollision);
                     }
 //                    timeline2.getKeyFrames().add(k61);
 //                    timeline2.getKeyFrames().add(k63);
@@ -414,6 +430,7 @@ public class Start2 extends Application {
                         flip_allow = false;
                         cherryImageView = tempCherry;
 
+
                         System.out.println("after1 - "+stickmanImageView.getLayoutX());
                         System.out.println("after2 - "+pillar1.getLayoutX());
                         System.out.println("after3 - "+pillar2.getLayoutX());
@@ -423,8 +440,54 @@ public class Start2 extends Application {
                         System.out.println("pillar 2 -"+pillar3.layoutXProperty());
                         pillar1 = pillar2;
                         pillar2 = pillar3;
+                        canRotate = true;
                         stickRct = generate_stick();
+                        increaseFlag = true;
+                        game_lock = true;
+
+
                     });
+                    Timeline collisionCheckTimeline = new Timeline(
+                            new KeyFrame(Duration.millis(8), wi -> {
+                                System.out.println("Checking for collision");
+                                System.out.println("is flipped -  "+ isFlipped);
+                                Bounds cherryBounds = cherryImageView.getBoundsInParent();
+                                if (stickmanImageView.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageView.getLayoutX() >= cherryBounds.getMinX()&& isFlipped) {
+                                    System.out.println("Detected cherry");
+//                                    collectedCherryCount += 1;
+                                    scenePane.getChildren().remove(cherryImageView);
+                                    System.out.println();
+                                }
+                            })
+                    );
+
+                    Timeline pillarcollisioncheck = new Timeline(
+                            new KeyFrame(Duration.millis(8), wi -> {
+                                System.out.println("Pillar collision");
+                                System.out.println("is flipped -  "+ isFlipped);
+                                Bounds b1 = pillar1.getBoundsInParent();
+                                Bounds b2 = pillar1.getBoundsInParent();
+
+                                if (stickmanImageView.getBoundsInParent().getMaxX() >= b1.getMinX() && flip_flag) {
+                                    System.out.println("--------PILLAR COLLISION ---------");
+//                                    collectedCherryCount += 1;
+                                    scenePane.getChildren().remove(cherryImageView);
+                                    System.out.println();
+                                }
+                            })
+                    );
+
+
+
+
+// Set the timeline to repeat indefinitely
+                    collisionCheckTimeline.setCycleCount(Timeline.INDEFINITE);
+
+// Add the keyframe to the timeline
+                    collisionCheckTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(8)));
+
+// Start the collision check timeline
+                    collisionCheckTimeline.play();
 
                     timeline3 = new Timeline();
 
@@ -434,6 +497,7 @@ public class Start2 extends Application {
                     timeline3.play();
 
                     timeline3.setOnFinished(opi->{
+                        collisionCheckTimeline.stop();
                         flip_allow = false;
                         timeline2.play();
                     });
@@ -467,6 +531,22 @@ public class Start2 extends Application {
                     timeline4.getKeyFrames().add(k4);
                     timeline4.play();
                     timeline4.setOnFinished(oo->{
+
+                        //game over text
+                        Text goText = new Text("Game Over!");
+                        goText.setLayoutX(75);
+                        goText.setLayoutY(150);
+
+                        // Load the font
+                        Font customFont = Font.loadFont(getClass().getResourceAsStream("/com/example/stickhero/kamikaze.3d-gradient-italic.ttf"), 48);
+                        goText.setFont(customFont);
+                        goText.toFront();
+                        goText.setFill(Color.BLACK);
+
+                        scenePane.getChildren().add(goText);
+
+
+
 //                        Rectangle over = new Rectangle(300,500, Color.WHITE);
 
                         Button button1 = new Button();
@@ -544,6 +624,13 @@ public class Start2 extends Application {
                         iv4.setFitHeight(47.0);
                         iv4.setFitWidth(47.0);
                         scenePane.getChildren().add(iv4);
+                        Image irev = new Image(getClass().getResourceAsStream("moye.png"));
+                        ImageView iv5 = new ImageView(irev);
+                        iv5.setLayoutY(200);
+                        iv5.setLayoutX(200);
+                        iv5.setFitHeight(47.0);
+                        iv5.setFitWidth(47.0);
+                        scenePane.getChildren().add(iv5);
 
                         iv1.setOnMousePressed(retry ->{
                             System.out.println("Mouse clicked!"); // Add this line for debugging
@@ -573,13 +660,25 @@ public class Start2 extends Application {
                         });
 
                         iv2.setOnMouseClicked(savegame ->{
-                            Text save_t = new Text("Game Saved Successsfully");
-                            save_t.setLayoutX(100);
-                            save_t.setLayoutY(200);
-                            save_t.setStyle("-fx-font: 48 arial;");
+                            Text save_t = new Text("Saved !");
+                            save_t.setLayoutX(170);
+                            save_t.setLayoutY(180);
+                            Font customFont2 = Font.loadFont(getClass().getResourceAsStream("/com/example/stickhero/kamikaze.3d-gradient-italic.ttf"), 24);
+                            save_t.setFont(customFont2);
+//                            save_t.toFront();
+                            save_t.setFill(Color.BLACK);
                             scenePane.getChildren().add(save_t);
                             System.out.println("HI");
 
+                        });
+
+                        iv4.setOnMouseClicked(goHomeEvent ->{
+                            HelloController hc = new HelloController();
+                            try {
+                                hc.toHomeScreen(goHomeEvent);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         });
 
 //                        StackPane stackPane = new StackPane();
@@ -587,22 +686,23 @@ public class Start2 extends Application {
 //                        StackPane.setAlignment(button2, Pos.CENTER_RIGHT);
 //                        StackPane.setAlignment(button3, Pos.CENTER);
 //
-                        scenePane.getChildren().addAll(button1, button2, button3, rimv, rimv2, rimv3);
+                        scenePane.getChildren().addAll(button2, button3, rimv, rimv2, rimv3);
 
 //                        over.setOpacity(over.getOpacity()*0.5);
 //                        stackPane.setLayoutX(60);
 //                        stackPane.setLayoutY(125);
-                        Text title = new Text("Game Over");
-                        title.setStyle("-fx-font: 48 arial");
-
-                        title.setLayoutX(100);
-                        title.setLayoutX(200);
+//                        Text title = new Text("Game Over");
+//                        title.setStyle("-fx-font: 48 arial");
+//
+//                        title.setLayoutX(100);
+//                        title.setLayoutX(200);
 //                        title.setFont(Font.font(16));
 //
 //                        stackPane.getChildren().add(title);
 //                        scenePane.getChildren().add(stackPane);
                     });
                 }
+
             });
             pause.play();
 
@@ -637,10 +737,10 @@ public class Start2 extends Application {
         Image ci = new Image(getClass().getResourceAsStream("590774.png"));
         ImageView temp = new ImageView(ci);
 
-        temp.setFitHeight(36);
-        temp.setFitWidth(28);
-        temp.setLayoutX(500 );
-        temp.setLayoutY(pillar2.getLayoutY()- cherryImageView.getFitHeight());
+        temp.setFitHeight(30);
+        temp.setFitWidth(30);
+        temp.setLayoutX(500);
+        temp.setLayoutY(pillar2.getLayoutY()+10);
         scenePane.getChildren().add(temp);
 
         cherryLocations.add(temp.getLayoutX());
@@ -652,10 +752,10 @@ public class Start2 extends Application {
         Image ci = new Image(getClass().getResourceAsStream("590774.png"));
         ImageView temp = new ImageView(ci);
 
-        temp.setFitHeight(36);
-        temp.setFitWidth(28.0);
-        temp.setLayoutX(generateRandomNumber(pillar1.getBoundsInParent().getMaxX(), pillar2.getBoundsInParent().getMinX()));
-        temp.setLayoutY(pillar2.getLayoutY()- cherryImageView.getFitHeight());
+        temp.setFitHeight(30);
+        temp.setFitWidth(30);
+        temp.setLayoutX(generateRandomNumber(pillar1.getBoundsInParent().getMaxX()+10, pillar2.getBoundsInParent().getMinX()-20));
+        temp.setLayoutY(pillar2.getLayoutY()- cherryImageView.getFitHeight()+10);
         scenePane.getChildren().add(temp);
 
         cherryLocations.add(temp.getLayoutX());
@@ -677,22 +777,9 @@ public class Start2 extends Application {
 //        return false;
 //    }
 
-//    private Rectangle generateNewPillar3() {
-//
-//        Rectangle pp = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
-//        pp.setLayoutX(440+pp.getWidth());
-//        pp.setLayoutY(500);
-//        scenePane.getChildren().add(pp);//
-//
-//
-//        return pp;
-//
-//        // Add the new pillar2 to the scene
-//    }
-
 
     private Rectangle generate_stick(){
-        stickRct = new Rectangle(7.5, 1, Color.BLACK);
+        stickRct = new Rectangle(5, 1, Color.BLACK);
         stickRct.setLayoutX(stickmanImageView.getLayoutX()+stickmanImageView.getFitWidth());
 
         stickRct.setLayoutY(stickmanImageView.getLayoutY()+stickmanImageView.getFitHeight());
@@ -713,7 +800,7 @@ public class Start2 extends Application {
     public static void main(String[] args) {
         MusicPlayer player = new MusicPlayer();
         Thread music_t = new Thread(player);
-//        music_t.start();
+        music_t.start();
         launch(args);
     }
 }
