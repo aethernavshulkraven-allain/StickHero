@@ -163,60 +163,13 @@ public class Start2 extends Application {
 
     private static boolean stickmanIntersects;
 
-    public static void setValidStick(boolean validStick) {
-        Start2.validStick = validStick;
-    }
-
-    public static void setStickFell(boolean stickFell) {
-        Start2.stickFell = stickFell;
-    }
-
-    public static boolean isCherryIncremented() {
-        return cherryIncremented;
-    }
-
-    public static void setCherryIncremented(boolean cherryIncremented) {
-        Start2.cherryIncremented = cherryIncremented;
-    }
-
-    public static boolean isStickmanIntersects() {
-        return stickmanIntersects;
-    }
-
-    public static void setStickmanIntersects(boolean stickmanIntersects) {
-        Start2.stickmanIntersects = stickmanIntersects;
-    }
-
-    public static boolean isValidStick() {
-        return validStick;
-    }
-
-    public static boolean isStickFell() {
-        return stickFell;
-    }
-
-    private static double getMinPillarWidth() {
-        return minPillarWidth;
-    }
-
-    private static void setMinPillarWidth(double minPillarWidth) {
-        Start2.minPillarWidth = minPillarWidth;
-    }
-
-    private static double getMaxPillarWidth() {
-        return maxPillarWidth;
-    }
-
-    private static void setMaxPillarWidth(double maxPillarWidth) {
-        Start2.maxPillarWidth = maxPillarWidth;
-    }
-
     private static Pane scenePane;
     private int start_x = 75;
 
     //stickman
     private Image stickmanImage = new Image(getClass().getResourceAsStream("0x0ss-85BackgroundRemoved.png"));
     public ImageView stickmanImageView = new ImageView(stickmanImage);
+
 
 //    public ImageView stxi =
 
@@ -301,6 +254,8 @@ public class Start2 extends Application {
     public double getD() {
         return d;
     }
+    public ImageView stickmanImageview;
+
 
     public void setD(double d) {
         this.d = d;
@@ -510,9 +465,6 @@ public class Start2 extends Application {
         this.stickmanImage = stickmanImage;
     }
 
-    public ImageView getStickmanImageView() {
-        return stickmanImageView;
-    }
 
     public void setStickmanImageView(ImageView stickmanImageView) {
         this.stickmanImageView = stickmanImageView;
@@ -845,7 +797,11 @@ public class Start2 extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            isFlipped = true;
+            stickHero sh = stickHero.getInstance();
+            stickmanImageview = sh.getImv();
+            //used the singleton stickman instance "sh"
+            cherrylock = true;
+            isFlipped = false;
             increaseFlag = true;
             game_lock = true;
             canRotate = true;
@@ -1068,12 +1024,10 @@ public class Start2 extends Application {
                                     KeyFrame kk2 = new KeyFrame(Duration.ZERO,new KeyValue(stickmanImageView.xProperty(),stickmanImageView.getLayoutX()));
                                     KeyFrame kk3 = new KeyFrame(Duration.seconds(2),new KeyValue(stickmanImageView.yProperty(),800));
                                     endl.getKeyFrames().addAll(kk2,kk3);
-//                                    endl.play();
 
 
                                     TranslateTransition fall = new TranslateTransition(Duration.seconds(1),stickmanImageView);
                                     stickmanImageView.setLayoutX(xx);
-//                                    fall.setToX(pillar2.getLayoutX());
                                     stickmanImageView.setX(pillar2.getBoundsInParent().getMinX()-pillar2.getWidth());
                                     fall.setToY(800);
 
@@ -1090,10 +1044,10 @@ public class Start2 extends Application {
 //                                    ended.play();
                                     collisionCheckTimeline.stop();
 
-                                    System.out.println("DONE");
 
                                 }
                                 if (stickmanImageView.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageView.getLayoutX() >= cherryBounds.getMinX()&& isFlipped) {
+                                    System.out.println("Collision out");
                                     if(cherrylock){
                                         System.out.println("Collision in");
 
@@ -1107,7 +1061,7 @@ public class Start2 extends Application {
                                         cherryText.setText(String.valueOf(collectedCherryCount));
                                         scenePane.getChildren().remove(cherryImageView);
                                     }
-//                                    System.out.println("Detected cherry");
+                                    System.out.println("after - "+collectedCherryCount);
 
                                 }
                             })
@@ -1117,10 +1071,7 @@ public class Start2 extends Application {
 
 
 
-// Set the timeline to repeat indefinitely
                     collisionCheckTimeline.setCycleCount(Timeline.INDEFINITE);
-
-// Add the keyframe to the timeline
                     collisionCheckTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(8)));
                     collisionCheckTimeline.play();
                     timeline3 = new Timeline();
@@ -1227,8 +1178,6 @@ public class Start2 extends Application {
         }else{
             temp.setOpacity(1);
         }
-//        setCherryOpacity();
-
 
         temp.setFitHeight(30);
         temp.setFitWidth(30);
@@ -1289,13 +1238,20 @@ public class Start2 extends Application {
         readHighScore(5);
         readHighScore(7);
         MusicPlayer player = new MusicPlayer();
+
+//        Song1Player song1Player = new Song1Player(player);
+
         Thread music_t = new Thread(player);
         music_t.start();
         launch(args);
     }
 
     public void end() throws IOException {
+        int x = readHighScore(5);
         {
+
+
+
             if(score>readHighScore(1)){
                 writeScore(score);
             }
@@ -1330,6 +1286,15 @@ public class Start2 extends Application {
                 goText.setFill(Color.BLACK);
 
                 scenePane.getChildren().add(goText);
+
+                Text hs = new Text("Highest Score: "+x);
+                hs.setLayoutX(100);
+                hs.setLayoutY(480);
+                Font customFont5 = Font.loadFont(getClass().getResourceAsStream("/com/example/stickhero/kamikaze.3d-gradient-italic.ttf"), 24);
+                hs.setFont(customFont5);
+                hs.setFill(Color.BLACK);
+                scenePane.getChildren().add(hs);
+
                 Button button1 = new Button();
                 Image retryIm = null;
 
@@ -1497,29 +1462,11 @@ public class Start2 extends Application {
                 scenePane.getChildren().addAll(rimv, rimv2, rimv3);
             });
         }
-
-
-    }
-
-
-
-
-
-}
-
-
-class MusicPlayer implements Runnable{
-    MediaPlayer mediaPlayer;
-    @Override
-    public void run() {
-//        System.out.println("hihi");
-        String ms = "mujic.mp3";
-        Media h = new Media(Paths.get(ms).toUri().toString());
-        mediaPlayer = new MediaPlayer(h);
-        mediaPlayer.play();
-
     }
 }
+
+
+
 
 class saveDetails implements Serializable {
     public int cherryCount;
