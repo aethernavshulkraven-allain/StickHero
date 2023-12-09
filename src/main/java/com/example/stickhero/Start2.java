@@ -112,6 +112,45 @@ public class Start2 extends Application {
 
     private static double maxPillarWidth = 100;
 
+    private static boolean validStick;
+    private static boolean stickFell;
+
+    private static boolean cherryIncremented;
+
+    private static boolean stickmanIntersects;
+
+    public static void setValidStick(boolean validStick) {
+        Start2.validStick = validStick;
+    }
+
+    public static void setStickFell(boolean stickFell) {
+        Start2.stickFell = stickFell;
+    }
+
+    public static boolean isCherryIncremented() {
+        return cherryIncremented;
+    }
+
+    public static void setCherryIncremented(boolean cherryIncremented) {
+        Start2.cherryIncremented = cherryIncremented;
+    }
+
+    public static boolean isStickmanIntersects() {
+        return stickmanIntersects;
+    }
+
+    public static void setStickmanIntersects(boolean stickmanIntersects) {
+        Start2.stickmanIntersects = stickmanIntersects;
+    }
+
+    public static boolean isValidStick() {
+        return validStick;
+    }
+
+    public static boolean isStickFell() {
+        return stickFell;
+    }
+
     private static double getMinPillarWidth() {
         return minPillarWidth;
     }
@@ -134,6 +173,8 @@ public class Start2 extends Application {
     //stickman
     private Image stickmanImage = new Image(getClass().getResourceAsStream("0x0ss-85BackgroundRemoved.png"));
     public ImageView stickmanImageView = new ImageView(stickmanImage);
+
+//    public ImageView stxi =
 
     private Timeline timeline1;
     private Text counter;
@@ -694,7 +735,7 @@ public class Start2 extends Application {
             pillar2obj = new pillar(pillar2);
 
             SaveCurrState.f = false;
-            reloadFlag = 1;
+            reloadFlag = 0;
         }
 
         else {
@@ -857,6 +898,8 @@ public class Start2 extends Application {
 
                 // Check if stickRct falls on pillar2 from pillar1
                 if (stickRct.getHeight() + stickRct.getLayoutX() >= pillar2.getLayoutX() && stickRct.getHeight() + stickRct.getLayoutX() <= pillar2.getLayoutX() + pillar2.getWidth()) {
+                    stickFell = true;
+                    validStick = stickRct.getHeight() + stickRct.getLayoutX() >= pillar2.getLayoutX() && stickRct.getHeight() + stickRct.getLayoutX() <= pillar2.getLayoutX() + pillar2.getWidth();
                     score++;
                     counter.setText(String.valueOf(score));
 
@@ -905,6 +948,8 @@ public class Start2 extends Application {
                                 cherryText.setText(String.valueOf(collectedCherryCount));
                                 System.out.println("Detected cherry and Is flipped");
                                 collectedCherryCount += 1;
+                                cherryIncremented = true;
+                                stickmanIntersects = stickmanImageView.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageView.getLayoutX() >= cherryBounds.getMinX();
                                 scenePane.getChildren().remove(cherryImageView);
                                 System.out.println();
                             }
@@ -1007,12 +1052,12 @@ public class Start2 extends Application {
                             })
                     );
 
-                    pillarcollisioncheck.setOnFinished(op->{
-                        if(collided){
-
-                        }
-
-                    });
+//                    pillarcollisioncheck.setOnFinished(op->{
+//                        if(collided){
+//
+//                        }
+//
+//                    });
 
 
 
@@ -1089,11 +1134,11 @@ public class Start2 extends Application {
 
                         Button button1 = new Button();
                         Image retryIm = null;
-                        try {
-                            retryIm = new Image(getClass().getResource("retry.512x512.png").toURI().toString());
-                        } catch (URISyntaxException e) {
-                            throw new RuntimeException(e);
-                        }
+//                        try {
+//                            retryIm = new Image(getClass().getResource("retry.512x512.png").toURI().toString());
+//                        } catch (URISyntaxException e) {
+//                            throw new RuntimeException(e);
+//                        }
 
                         Image goHome = null;
                         try {
@@ -1121,7 +1166,6 @@ public class Start2 extends Application {
                         rimv3.setFitWidth(8);
 
 
-//abstract-surface-textures-white-concrete-stone-wall_74190-8189.jpg-2.avif
                         Image i2 = new Image(getClass().getResourceAsStream("background.jpg"));
                         ImageView im2 = new ImageView(i2);
                         im2.setLayoutY(100);
@@ -1139,15 +1183,7 @@ public class Start2 extends Application {
                         button1.setStyle("-fx-border-color: #ff0000; -fx-border-width: 5px;");
                         button1.setStyle("-fx-background-color: #00ff00");
                         button1.setGraphic(rimv);
-                        Image i1 = new Image(getClass().getResourceAsStream("retry.512x512.png"));
-                        ImageView iv1 = new ImageView(i1);
-                        iv1.setLayoutY(500);
-                        iv1.setLayoutX(200);
-                        iv1.setFitHeight(47.0);
-                        iv1.setFitWidth(47.0);
-                        scenePane.getChildren().add(iv1);
-                        boolean isMouseTransparent = iv1.isMouseTransparent();
-//                        System.out.println("Is mouse transparent: " + isMouseTransparent);
+
                         Image i3 = new Image(getClass().getResourceAsStream("2639912_save_icon.png"));
                         ImageView iv2 = new ImageView(i3);
                         iv2.setLayoutY(400);
@@ -1170,15 +1206,6 @@ public class Start2 extends Application {
                         iv5.setFitWidth(47.0);
                         scenePane.getChildren().add(iv5);
 
-                        iv1.setOnMousePressed(retry ->{
-                            System.out.println("Mouse clicked!"); // Add this line for debugging
-
-                            score = 0;
-                            start(myStage);
-                        });
-
-
-
                         Button button3 = new Button();
                         button3.setGraphic(rimv3);
                         Button button2 = new Button();
@@ -1199,7 +1226,7 @@ public class Start2 extends Application {
 
                         iv2.setOnMouseClicked(savegame ->{
 
-//                            saveDetails myProg = new saveDetails(collectedCherryCount, score, pillar1.getWidth(), pillar1.getLayoutX(), pillar2.getWidth(), pillar2.getLayoutX());
+                            saveDetails progress = new saveDetails(collectedCherryCount, score, pillar1.getWidth(), pillar1.getLayoutX(), pillar2.getWidth(), pillar2.getLayoutX());
                             try {
                                 serialize(progress);
                             } catch (IOException e) {
@@ -1211,7 +1238,6 @@ public class Start2 extends Application {
                             save_t.setLayoutY(180);
                             Font customFont2 = Font.loadFont(getClass().getResourceAsStream("/com/example/stickhero/kamikaze.3d-gradient-italic.ttf"), 24);
                             save_t.setFont(customFont2);
-//                            save_t.toFront();
                             save_t.setFill(Color.BLACK);
                             scenePane.getChildren().add(save_t);
                         });
@@ -1226,25 +1252,26 @@ public class Start2 extends Application {
                             }
                         });
 
-//                        StackPane stackPane = new StackPane();
-//                        StackPane.setAlignment(button1, Pos.CENTER_LEFT);
-//                        StackPane.setAlignment(button2, Pos.CENTER_RIGHT);
-//                        StackPane.setAlignment(button3, Pos.CENTER);
-//
+                        iv5.setOnMouseClicked(revival -> {
+                            if(collectedCherryCount >= 3){
+                                collectedCherryCount = collectedCherryCount -3;
+                                start(myStage);
+                            }else {
+                                Text revf = new Text("Insufficient cherries !");
+                                revf.setLayoutX(170);
+                                revf.setLayoutY(180);
+                                Font customFont2 = Font.loadFont(getClass().getResourceAsStream("/com/example/stickhero/kamikaze.3d-gradient-italic.ttf"), 24);
+                                revf.setFont(customFont2);
+                                revf.setFill(Color.BLACK);
+                                scenePane.getChildren().add(revf);
+                            }
+                        });
+
+
+
                         scenePane.getChildren().addAll(button2, button3, rimv, rimv2, rimv3);
 
-//                        over.setOpacity(over.getOpacity()*0.5);
-//                        stackPane.setLayoutX(60);
-//                        stackPane.setLayoutY(125);
-//                        Text title = new Text("Game Over");
-//                        title.setStyle("-fx-font: 48 arial");
-//
-//                        title.setLayoutX(100);
-//                        title.setLayoutX(200);
-//                        title.setFont(Font.font(16));
-//
-//                        stackPane.getChildren().add(title);
-//                        scenePane.getChildren().add(stackPane);
+
                     });
                 }
 

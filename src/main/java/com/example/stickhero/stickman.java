@@ -1,8 +1,9 @@
 package com.example.stickhero;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class stickman implements gameObjects, collidable    {
+public class stickman implements gameObjects, collidable {
 
     private stick avatarsStick;
 
@@ -59,4 +60,9 @@ public class stickman implements gameObjects, collidable    {
     public void collectCherry(){
         //stickman collects cherries
     }
+
+//    public stickman getInstance(){
+//        Image stickmanImage = new Image(getClass().getResourceAsStream("0x0ss-85BackgroundRemoved.png"));
+////        Ima
+//    }
 }

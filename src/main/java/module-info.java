@@ -4,6 +4,9 @@ module com.example.stickhero {
 
     requires com.almasb.fxgl.all;
     requires javafx.media;
+    requires org.testng;
+    requires org.junit.platform.commons;
+    requires junit;
 
     opens com.example.stickhero to javafx.fxml;
     exports com.example.stickhero;
