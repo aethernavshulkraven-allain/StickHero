@@ -9,6 +9,7 @@ import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -115,6 +116,48 @@ public class Start2 extends Application {
 
     private static boolean validStick;
     private static boolean stickFell;
+
+    private static boolean stickmanIsFlipped;
+
+    public static boolean isStickmanIsFlipped() {
+        return stickmanIsFlipped;
+    }
+
+    public static void setStickmanIsFlipped(boolean stickmanIsFlipped) {
+        Start2.stickmanIsFlipped = stickmanIsFlipped;
+    }
+
+    public static boolean isValidStick() {
+        return validStick;
+    }
+
+    public static void setValidStick(boolean validStick) {
+        Start2.validStick = validStick;
+    }
+
+    public static boolean isStickFell() {
+        return stickFell;
+    }
+
+    public static void setStickFell(boolean stickFell) {
+        Start2.stickFell = stickFell;
+    }
+
+    public static boolean isCherryIncremented() {
+        return cherryIncremented;
+    }
+
+    public static void setCherryIncremented(boolean cherryIncremented) {
+        Start2.cherryIncremented = cherryIncremented;
+    }
+
+    public static boolean isStickmanIntersects() {
+        return stickmanIntersects;
+    }
+
+    public static void setStickmanIntersects(boolean stickmanIntersects) {
+        Start2.stickmanIntersects = stickmanIntersects;
+    }
 
     private static boolean cherryIncremented;
 
@@ -709,11 +752,10 @@ public class Start2 extends Application {
                 stickmanImageView.setScaleX(-1);
                 flip_flag = false;
             } else {
-                stickmanImageView.setY(0);  // Set the Y position to the top
-                stickmanImageView.setRotate(0);  // Reset rotation
+                stickmanImageView.setY(0);
+                stickmanImageView.setRotate(0);
                 stickmanImageView.setScaleX(1);
                 flip_flag = true;
-                // Reset scale
             }
         }else{
             System.out.println("CANT FLIP");
@@ -875,6 +917,27 @@ public class Start2 extends Application {
         else if (code.equals(KeyCode.SPACE)) {
             tryFlip();
         }
+
+        if(code.equals(KeyCode.S)){
+            saveDetails progress = new saveDetails(collectedCherryCount, score, pillar1.getWidth(), pillar1.getLayoutX(), pillar2.getWidth(), pillar2.getLayoutX());
+            try {
+                serialize(progress);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            Text save_t = new Text("Saved !");
+            save_t.setLayoutX(170);
+            save_t.setLayoutY(180);
+            Font customFont2 = Font.loadFont(getClass().getResourceAsStream("/com/example/stickhero/kamikaze.3d-gradient-italic.ttf"), 24);
+            save_t.setFont(customFont2);
+            save_t.setFill(Color.BLACK);
+            scenePane.getChildren().add(save_t);
+
+            HelloController hc = new HelloController();
+
+
+        }
     }
 
     public boolean collided = false;
@@ -926,6 +989,8 @@ public class Start2 extends Application {
                     double p2 = pillar2.getBoundsInParent().getMinX();
                     double p3 = pillar3.getLayoutX();
                     double stm = stickmanImageView.getLayoutX();
+                    double shm = stickmanImageview.getLayoutX();
+
                     double inc = cherryImageView.getLayoutX();
 
 
@@ -938,6 +1003,12 @@ public class Start2 extends Application {
 
                     KeyFrame k6 =  new KeyFrame(Duration.seconds(1.2), new KeyValue(stickmanImageView.layoutXProperty(), pillar2.getBoundsInParent().getMaxX() - stickmanImageView.getFitWidth()));
                     KeyFrame k10  = new KeyFrame(Duration.seconds(2), new KeyValue(stickmanImageView.layoutXProperty(), pillar2.getWidth()-stickmanImageView.getFitWidth()-5));
+
+                    KeyFrame k06 =  new KeyFrame(Duration.seconds(1.2), new KeyValue(stickmanImageview.layoutXProperty(), pillar2.getBoundsInParent().getMaxX() - stickmanImageview.getFitWidth()));
+                    KeyFrame k100  = new KeyFrame(Duration.seconds(2), new KeyValue(stickmanImageview.layoutXProperty(), pillar2.getWidth()-stickmanImageview.getFitWidth()-5));
+
+                    Timeline tt = new Timeline();
+                    tt.getKeyFrames().addAll(k06,k100);
                     KeyFrame k11  = new KeyFrame(Duration.seconds(2), new KeyValue(stickRct.layoutXProperty(), p1-stickRct.getHeight()));
 
                     KeyFrame k7  = new KeyFrame(Duration.seconds(2), new KeyValue(pillar1.layoutXProperty(),-200));
@@ -1024,12 +1095,17 @@ public class Start2 extends Application {
                                 }
                                 if (stickmanImageView.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageView.getLayoutX() >= cherryBounds.getMinX()&& isFlipped) {
                                     if(cherrylock){
+                                        System.out.println("Collision in");
+
                                         collectedCherryCount++;
+                                        cherrylock = false;
                                         cherryIncremented = true;
+                                        stickmanIsFlipped = isFlipped;
                                         stickmanIntersects = stickmanImageView.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageView.getLayoutX() >= cherryBounds.getMinX()&& isFlipped;
+                                        boolean stickfigintersects = stickmanImageview.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageview.getLayoutX() >= cherryBounds.getMinX()&& isFlipped;
+
                                         cherryText.setText(String.valueOf(collectedCherryCount));
                                         scenePane.getChildren().remove(cherryImageView);
-                                        cherrylock = false;
                                     }
 //                                    System.out.println("Detected cherry");
 
@@ -1111,7 +1187,7 @@ public class Start2 extends Application {
 
     public static void writeScore(int x) throws IOException {
 
-        PrintWriter fww = new PrintWriter((new FileWriter("/Users/avis/Downloads/temp/src/main/java/com/example/stickhero/highscore.txt")));
+        PrintWriter fww = new PrintWriter((new FileWriter("/Users/arnavshukla/Desktop/newProj/src/main/java/com/example/stickhero/highscore.txt")));
         String s = String.valueOf(x);
         fww.write(s +" ");
         fww.close();
@@ -1120,18 +1196,25 @@ public class Start2 extends Application {
 
     }
 
+    private static Map<Double,Rectangle> pillarr_arrlist = new HashMap<>();
+
     private Rectangle generateNewPillar3() {
+        double width = generateRandomNumber(70, 100);
+        if(!pillarr_arrlist.containsKey(width)){
+            Rectangle pp = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
+            pp.setLayoutX(440 + pp.getWidth());
+            pp.setLayoutY(500);
+            pillarr_arrlist.put(width,pp);
 
-        Rectangle pp = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
-        pp.setLayoutX(440 + pp.getWidth());
-        pp.setLayoutY(500);
+        }
+        Rectangle rectangle = pillarr_arrlist.get(width);
+        rectangle.setLayoutX(440 + rectangle.getWidth());
+        rectangle.setLayoutY(500);
 
-//
-        scenePane.getChildren().add(pp);
-        return pp;
+        scenePane.getChildren().add(rectangle);
 
-        // Add the new pillar2 to the scene
-//        scenePane.getChildren().add(pillar2);
+        return rectangle;
+
     }
 
 
@@ -1191,7 +1274,7 @@ public class Start2 extends Application {
         return stickRct;
     }
     public static int readHighScore(int score) throws FileNotFoundException {
-        Scanner in2 = new Scanner(new BufferedInputStream(new FileInputStream("/Users/avis/Downloads/temp/src/main/java/com/example/stickhero/highscore.txt")));
+        Scanner in2 = new Scanner(new BufferedInputStream(new FileInputStream("/Users/arnavshukla/Desktop/newProj/src/main/java/com/example/stickhero/highscore.txt")));
         ArrayList<Integer> int_arr2 = new ArrayList<>();
         while(in2.hasNext()){
             int y = Integer.parseInt(in2.next());
@@ -1204,7 +1287,6 @@ public class Start2 extends Application {
 
     public static void main(String[] args) throws IOException {
         readHighScore(5);
-        writeScore(7);
         readHighScore(7);
         MusicPlayer player = new MusicPlayer();
         Thread music_t = new Thread(player);
@@ -1226,6 +1308,9 @@ public class Start2 extends Application {
             KeyFrame k2  = new KeyFrame(Duration.seconds(2), new KeyValue(stickmanImageView.layoutXProperty(), stickmanImageView.getX()+stickRct.getBoundsInParent().getMaxX()-10));
             KeyFrame k3  = new KeyFrame(Duration.seconds(2), new KeyValue(stickmanImageView.layoutYProperty(), stickmanImageView.getLayoutY()));
             KeyFrame k4  = new KeyFrame(Duration.seconds(4), new KeyValue(stickmanImageView.layoutYProperty(), stickmanImageView.getLayoutY()+500));
+            KeyFrame k222  = new KeyFrame(Duration.seconds(2), new KeyValue(stickmanImageview.layoutXProperty(), stickmanImageview.getX()+stickRct.getBoundsInParent().getMaxX()-10));
+            KeyFrame k333  = new KeyFrame(Duration.seconds(2), new KeyValue(stickmanImageview.layoutYProperty(), stickmanImageview.getLayoutY()));
+            KeyFrame k444  = new KeyFrame(Duration.seconds(4), new KeyValue(stickmanImageview.layoutYProperty(), stickmanImageview.getLayoutY()+500));
 //                    timeline4.getKeyFrames().add(k1);
             timeline4.getKeyFrames().add(k2);
             timeline4.getKeyFrames().add(k3);
@@ -1383,6 +1468,11 @@ public class Start2 extends Application {
                             saveCurrState = s1;
                             start(myStage);
 
+                            //if stickman is flipped flip again
+                            if(isFlipped == true){
+                                isFlipped = false;
+                            }
+
                             System.out.println(s1);
                         } catch (IOException | ClassNotFoundException e) {
                             throw new RuntimeException(e);
@@ -1404,12 +1494,7 @@ public class Start2 extends Application {
                         scenePane.getChildren().add(revf);
                     }
                 });
-
-
-
-                scenePane.getChildren().addAll(button2, button3, rimv, rimv2, rimv3);
-
-
+                scenePane.getChildren().addAll(rimv, rimv2, rimv3);
             });
         }
 
