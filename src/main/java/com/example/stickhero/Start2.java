@@ -5,19 +5,16 @@ import javafx.geometry.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.Scene;
@@ -28,7 +25,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -73,8 +70,12 @@ public class Start2 extends Application {
     public boolean flag3 = false;
     public boolean flag4 = false;
 
+    public int reloadFlag = 0;
 
-    public static SaveCurrState saveCurrState;
+    public saveDetails progress;
+
+
+    public static saveDetails saveCurrState;
 
     public Rectangle stickRct;
     public Rectangle tempRct;
@@ -179,6 +180,10 @@ public class Start2 extends Application {
 
 
     public void tryFlip(){
+        System.out.println("here");
+        if(stickmanImageView.getBoundsInParent().intersects(pillar2.getBoundsInParent())){
+            System.out.println("over");
+        }
         if(!(stickmanImageView.getBoundsInParent().getMinX()<pillar1.getBoundsInParent().getMaxX() || stickmanImageView.getBoundsInParent().getMaxX()>pillar2.getBoundsInParent().getMinX())){
             isFlipped = !isFlipped;
             if (isFlipped) {
@@ -200,24 +205,26 @@ public class Start2 extends Application {
     }
 
 
-    public void initializer(Pane scenePane,SaveCurrState s1){
-        if(SaveCurrState.isF()){
-            double p1_width = SaveCurrState.r1.getWidth();
-            double p2_width = SaveCurrState.r2.getWidth();
-            double x1 = SaveCurrState.r1.getLayoutX();
-            double x2 = SaveCurrState.r2.getLayoutX();
-            score = SaveCurrState.score;
-            int cherries = SaveCurrState.cherries;
+    public void initializer(Pane scenePane, saveDetails s1){
+        if(reloadFlag == 1){
+            double p1_width = s1.standingPillarWidth;
+            double p2_width = s1.nextPillarWidth;
+            double x1 = s1.standingPillarX;
+            double x2 = s1.nextPillarX;
+            score = s1.score;
+            int cherries = s1.cherryCount;
             pillar1 = new Rectangle(p1_width, 200, Color.BLACK);
             pillar1.setX(0);
             pillar1.setLayoutY(500);
 
+            //Pair<Double, Double> pillar2Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
             pillar2 = new Rectangle(p2_width, 200, Color.BLACK);
             pillar2.setLayoutX(x2);
             pillar2.setLayoutY(500);
             SaveCurrState.f = false;
-
+            reloadFlag = 1;
         }
+
         else {
             pillar1 = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
             pillar1.setX(0);
@@ -270,7 +277,9 @@ public class Start2 extends Application {
     @Override
     public void start(Stage stage) {
         try {
+            increaseFlag = true;
             game_lock = true;
+            canRotate = true;
 
             Parent root = FXMLLoader.load(getClass().getResource("play_menu3.fxml"));
             scenePane = new Pane(root);
@@ -322,6 +331,10 @@ public class Start2 extends Application {
 
     public boolean flip_flag = true;
 
+    public void collision(){
+
+    }
+
     private boolean aKeyPressed = false;
 
     private void handleKeyPressed(KeyEvent keyEvent) {
@@ -335,6 +348,9 @@ public class Start2 extends Application {
             tryFlip();
         }
     }
+
+    public boolean collided = false;
+
 
 
 
@@ -369,11 +385,11 @@ public class Start2 extends Application {
                     timeline2 = new Timeline();
                     pillar3 = generateNewPillar3();
                     tempCherry  = generateCherry();
-
-                    System.out.println("before1 - "+stickmanImageView.getLayoutX());
-                    System.out.println("before2 - "+pillar1.getLayoutX());
-                    System.out.println("before3 - "+pillar2.getLayoutX());
-                    System.out.println("before4 - "+pillar3.getLayoutX());
+//
+//                    System.out.println("before1 - "+stickmanImageView.getLayoutX());
+//                    System.out.println("before2 - "+pillar1.getLayoutX());
+//                    System.out.println("before3 - "+pillar2.getLayoutX());
+//                    System.out.println("before4 - "+pillar3.getLayoutX());
 
 //                    KeyFrame k1  = new KeyFrame(Duration.ZERO, new KeyValue(stickmanImageView.layoutXProperty(), stickmanImageView.getX()));
                     double p1 = pillar1.getLayoutX();
@@ -430,14 +446,14 @@ public class Start2 extends Application {
                         flip_allow = false;
                         cherryImageView = tempCherry;
 
-
-                        System.out.println("after1 - "+stickmanImageView.getLayoutX());
-                        System.out.println("after2 - "+pillar1.getLayoutX());
-                        System.out.println("after3 - "+pillar2.getLayoutX());
-                        System.out.println("after4 - "+pillar3.getLayoutX());
-                        System.out.println("after - "+stickmanImageView.getLayoutX());
-
-                        System.out.println("pillar 2 -"+pillar3.layoutXProperty());
+//
+//                        System.out.println("after1 - "+stickmanImageView.getLayoutX());
+//                        System.out.println("after2 - "+pillar1.getLayoutX());
+//                        System.out.println("after3 - "+pillar2.getLayoutX());
+//                        System.out.println("after4 - "+pillar3.getLayoutX());
+//                        System.out.println("after - "+stickmanImageView.getLayoutX());
+//
+//                        System.out.println("pillar 2 -"+pillar3.layoutXProperty());
                         pillar1 = pillar2;
                         pillar2 = pillar3;
                         canRotate = true;
@@ -447,13 +463,35 @@ public class Start2 extends Application {
 
 
                     });
+
+
+                    Timeline ended = new Timeline();
+                    KeyFrame kf = new KeyFrame(Duration.seconds(2),new KeyValue(stickmanImageView.layoutYProperty(),800));
+//                    KeyFrame kf2 = new KeyFrame(Duration.ZERO,new KeyValue(stickmanImageView.layoutYProperty(),pillar2.getBoundsInParent().getMaxY()));
+                    KeyFrame kf2 = new KeyFrame(Duration.ZERO,new KeyValue(stickmanImageView.layoutXProperty(),stickmanImageView.getLayoutX()));
+
+                    KeyFrame kf3 = new KeyFrame(Duration.ZERO,new KeyValue(stickmanImageView.layoutXProperty(),pillar2.getBoundsInParent().getMinX()-stickmanImageView.getFitWidth()));
+
+
+                    ended.getKeyFrames().add(kf);
+                    ended.getKeyFrames().add(kf2);
+                    ended.getKeyFrames().add(kf3);
+
                     Timeline collisionCheckTimeline = new Timeline(
                             new KeyFrame(Duration.millis(8), wi -> {
-                                System.out.println("Checking for collision");
-                                System.out.println("is flipped -  "+ isFlipped);
+//                                System.out.println("Checking for collision");
+//                                System.out.println("is flipped -  "+ isFlipped);
                                 Bounds cherryBounds = cherryImageView.getBoundsInParent();
+                                Bounds p2b= pillar2.getBoundsInParent();
+
+                                if (stickmanImageView.getBoundsInParent().getMaxX()>= p2b.getMinX() && !flip_flag){
+
+                                    timeline3.stop();
+                                    ended.play();
+                                    System.out.println("DONE");
+                                }
                                 if (stickmanImageView.getLayoutX() <= cherryBounds.getMaxX() && stickmanImageView.getLayoutX() >= cherryBounds.getMinX()&& isFlipped) {
-                                    System.out.println("Detected cherry");
+//                                    System.out.println("Detected cherry");
 //                                    collectedCherryCount += 1;
                                     scenePane.getChildren().remove(cherryImageView);
                                     System.out.println();
@@ -461,21 +499,41 @@ public class Start2 extends Application {
                             })
                     );
 
+//                    ended.play();
                     Timeline pillarcollisioncheck = new Timeline(
-                            new KeyFrame(Duration.millis(8), wi -> {
-                                System.out.println("Pillar collision");
-                                System.out.println("is flipped -  "+ isFlipped);
-                                Bounds b1 = pillar1.getBoundsInParent();
-                                Bounds b2 = pillar1.getBoundsInParent();
+                            new KeyFrame(Duration.millis(2), wi -> {
+//                                System.out.println("Pillar collision");
+//                                System.out.println("is flipped -  "+ isFlipped);
 
-                                if (stickmanImageView.getBoundsInParent().getMaxX() >= b1.getMinX() && flip_flag) {
+                                System.out.println(pillar1.getLayoutX());
+                                System.out.println(pillar2.getLayoutX());
+                                Bounds b1 = pillar1.getBoundsInParent();
+                                Bounds b2 = pillar2.getBoundsInParent();
+                                System.out.println(collided);
+
+                                if (stickmanImageView.getBoundsInParent().intersects(pillar2.getBoundsInParent())) {
                                     System.out.println("--------PILLAR COLLISION ---------");
+
+
+
+                                    timeline3.stop();
+                                    ended.play();
+
+                                    collided = true;
+
 //                                    collectedCherryCount += 1;
-                                    scenePane.getChildren().remove(cherryImageView);
+//                                    scenePane.getChildren().remove(cherryImageView);
                                     System.out.println();
                                 }
                             })
                     );
+
+                    pillarcollisioncheck.setOnFinished(op->{
+                        if(collided){
+
+                        }
+
+                    });
 
 
 
@@ -488,6 +546,7 @@ public class Start2 extends Application {
 
 // Start the collision check timeline
                     collisionCheckTimeline.play();
+//                    pillarcollisioncheck.play();
 
                     timeline3 = new Timeline();
 
@@ -502,8 +561,8 @@ public class Start2 extends Application {
                         timeline2.play();
                     });
 
-                    System.out.println("p1 - "+pillar1.layoutXProperty());
-                    System.out.println("p2 - "+pillar2.layoutXProperty());
+//                    System.out.println("p1 - "+pillar1.layoutXProperty());
+//                    System.out.println("p2 - "+pillar2.layoutXProperty());
 
 
                 }
@@ -517,15 +576,15 @@ public class Start2 extends Application {
 
 
                     // Bring stick man to y = 0 through animation
-                    System.out.println("here");
+//                    System.out.println("here");
 
                     timeline4 = new Timeline();
-                    KeyFrame k1  = new KeyFrame(Duration.ZERO, new KeyValue(stickmanImageView.layoutXProperty(), stickmanImageView.getX()));
+//                    KeyFrame k1  = new KeyFrame(Duration.ZERO, new KeyValue(stickmanImageView.layoutXProperty(), stickmanImageView.getX()));
 
                     KeyFrame k2  = new KeyFrame(Duration.seconds(2), new KeyValue(stickmanImageView.layoutXProperty(), stickmanImageView.getX()+stickRct.getBoundsInParent().getMaxX()-10));
                     KeyFrame k3  = new KeyFrame(Duration.seconds(2), new KeyValue(stickmanImageView.layoutYProperty(), stickmanImageView.getLayoutY()));
                     KeyFrame k4  = new KeyFrame(Duration.seconds(4), new KeyValue(stickmanImageView.layoutYProperty(), stickmanImageView.getLayoutY()+500));
-                    timeline4.getKeyFrames().add(k1);
+//                    timeline4.getKeyFrames().add(k1);
                     timeline4.getKeyFrames().add(k2);
                     timeline4.getKeyFrames().add(k3);
                     timeline4.getKeyFrames().add(k4);
@@ -609,7 +668,7 @@ public class Start2 extends Application {
                         iv1.setFitWidth(47.0);
                         scenePane.getChildren().add(iv1);
                         boolean isMouseTransparent = iv1.isMouseTransparent();
-                        System.out.println("Is mouse transparent: " + isMouseTransparent);
+//                        System.out.println("Is mouse transparent: " + isMouseTransparent);
                         Image i3 = new Image(getClass().getResourceAsStream("2639912_save_icon.png"));
                         ImageView iv2 = new ImageView(i3);
                         iv2.setLayoutY(400);
@@ -660,6 +719,14 @@ public class Start2 extends Application {
                         });
 
                         iv2.setOnMouseClicked(savegame ->{
+
+//                            saveDetails myProg = new saveDetails(collectedCherryCount, score, pillar1.getWidth(), pillar1.getLayoutX(), pillar2.getWidth(), pillar2.getLayoutX());
+                            try {
+                                serialize(progress);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+
                             Text save_t = new Text("Saved !");
                             save_t.setLayoutX(170);
                             save_t.setLayoutY(180);
@@ -668,9 +735,8 @@ public class Start2 extends Application {
 //                            save_t.toFront();
                             save_t.setFill(Color.BLACK);
                             scenePane.getChildren().add(save_t);
-                            System.out.println("HI");
-
                         });
+
 
                         iv4.setOnMouseClicked(goHomeEvent ->{
                             HelloController hc = new HelloController();
@@ -712,6 +778,33 @@ public class Start2 extends Application {
 //
 
     }
+
+
+    private static void serialize(saveDetails info) throws IOException{
+        ObjectOutputStream out = null;
+        try{
+            System.out.println(info);
+            out = new ObjectOutputStream(new FileOutputStream("saveProgressNew.txt"));
+            out.writeObject(info);
+        }finally {
+            out.close();
+        }
+    }
+
+    public static void deserialize(String progressFile) throws IOException, ClassNotFoundException {
+        ObjectInputStream in = null;
+//        ObjectOutputStream out  = null;
+
+        try {
+            in = new ObjectInputStream (
+                    new FileInputStream(progressFile));
+            saveDetails s1 = (saveDetails) in.readObject();
+            System.out.println(s1);
+        } finally {
+            in.close();
+        }
+    }
+
 
     private static int cherryOccurs() {
         Random random = new Random();
@@ -810,7 +903,7 @@ class MusicPlayer implements Runnable{
     MediaPlayer mediaPlayer;
     @Override
     public void run() {
-        System.out.println("hihi");
+//        System.out.println("hihi");
         String ms = "mujic.mp3";
         Media h = new Media(Paths.get(ms).toUri().toString());
         mediaPlayer = new MediaPlayer(h);
@@ -818,6 +911,37 @@ class MusicPlayer implements Runnable{
 
     }
 }
+
+class saveDetails implements Serializable {
+    public int cherryCount;
+    public int score;
+    public double standingPillarWidth;
+    public double standingPillarX;
+    public double nextPillarWidth;
+    public double nextPillarX;
+
+    @Override
+    public String toString() {
+        return "\nsaveDetails{" +
+                "cherryCount=" + cherryCount +
+                ", score=" + score +
+                ", standingPillarWidth=" + standingPillarWidth +
+                ", standingPillarX=" + standingPillarX +
+                ", nextPillarWidth=" + nextPillarWidth +
+                ", nextPillarX=" + nextPillarX +
+                "\n}";
+    }
+
+    public saveDetails(int cherryCount, int score, double standingPillarWidth, double standingPillarX, double nextPillarWidth, double nextPillarX) {
+        this.cherryCount = cherryCount;
+        this.score = score;
+        this.standingPillarWidth = standingPillarWidth;
+        this.standingPillarX = standingPillarX;
+        this.nextPillarWidth = nextPillarWidth;
+        this.nextPillarX = nextPillarX;
+    }
+}
+
 
 class SaveCurrState{
 
