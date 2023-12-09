@@ -1,7 +1,11 @@
 package com.example.stickhero;
 
+import javafx.scene.shape.Rectangle;
+
 public class pillar implements gameObjects, collidable{
     private coordinates position;
+
+    private Rectangle pillarRct;
 
     public coordinates getPosition() {
         return position;
@@ -11,11 +15,12 @@ public class pillar implements gameObjects, collidable{
         this.position = pillarPosition;
     }
 
-    public pillar(coordinates pillarPosition, int height, int width, int xstart) {
-        this.position = pillarPosition;
-        this.height = height;
-        this.width = width;
-        this.xstart = xstart;
+    public pillar(Rectangle pillarRct) {
+        this.pillarRct = pillarRct;
+        this.position = new coordinates((int) pillarRct.getLayoutX(), (int) pillarRct.getLayoutY());
+        this.height = (int) pillarRct.getHeight();
+        this.width = (int) pillarRct.getWidth();
+        this.xstart = (int) pillarRct.getLayoutX();
     }
 
     @Override

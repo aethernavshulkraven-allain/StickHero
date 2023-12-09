@@ -1,7 +1,19 @@
 package com.example.stickhero;
 
-public class cherry implements gameObjects, collidable, reward {
+import javafx.scene.image.ImageView;
+
+public class cherry implements gameObjects, collidable {
     private coordinates position;
+
+    private ImageView cherryIv;
+
+    public ImageView getCherryIv() {
+        return cherryIv;
+    }
+
+    public void setCherryIv(ImageView cherryIv) {
+        this.cherryIv = cherryIv;
+    }
 
     public coordinates getPosition() {
         return position;
@@ -11,17 +23,10 @@ public class cherry implements gameObjects, collidable, reward {
         this.position = cherryPosition;
     }
 
-    public cherry(coordinates cherryPosition) {
-        this.position = cherryPosition;
+
+    public cherry(ImageView cherryIv) {
+        this.cherryIv = cherryIv;
+        this.position = new coordinates((int) cherryIv.getLayoutX(), (int) cherryIv.getLayoutY());
     }
 
-    @Override
-    public void increment() {
-        //
-    }
-
-    @Override
-    public void decrement() {
-        //
-    }
 }

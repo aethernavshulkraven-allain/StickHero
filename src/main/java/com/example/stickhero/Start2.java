@@ -41,6 +41,7 @@ public class Start2 extends Application {
 
     private boolean isFlipped = true;
 
+    private storage gameData;
 
     PauseTransition pause3 ;
     public double d;
@@ -51,13 +52,13 @@ public class Start2 extends Application {
     private Rectangle pillar3;
     private TranslateTransition pillar3Transition;
 
-    public Rectangle getPillar3() {
+    private Rectangle getPillar3() {
         return pillar3;
     }
 
     private TranslateTransition t;
 
-    public static boolean flag;
+    private static boolean flag;
 
     private TranslateTransition stickmanTransitionQuick;
 
@@ -65,90 +66,558 @@ public class Start2 extends Application {
     private TranslateTransition pillar1Transition;
     private TranslateTransition pillar2Transition;
 
-    public boolean flag1 = false;
-    public boolean flag2 = false;
-    public boolean flag3 = false;
-    public boolean flag4 = false;
+    private boolean flag1 = false;
+    private boolean flag2 = false;
+    private boolean flag3 = false;
+    private boolean flag4 = false;
 
-    public int reloadFlag = 0;
+    private int reloadFlag = 0;
 
-    public saveDetails progress;
+    public int getReloadFlag() {
+        return reloadFlag;
+    }
+
+    public void setReloadFlag(int reloadFlag) {
+        this.reloadFlag = reloadFlag;
+    }
+
+    private saveDetails progress;
 
 
-    public static saveDetails saveCurrState;
+    public static saveDetails getSaveCurrState() {
+        return saveCurrState;
+    }
 
-    public Rectangle stickRct;
-    public Rectangle tempRct;
+    public static void setSaveCurrState(saveDetails saveCurrState) {
+        Start2.saveCurrState = saveCurrState;
+    }
 
-    public boolean flip_allow = false;
+    private static saveDetails saveCurrState;
+
+    private Rectangle stickRct;
+    private Rectangle tempRct;
+
+    private boolean flip_allow = false;
 
 
-    public Rectangle pillar1;
-    public Rectangle pillar2;
+    private Rectangle pillar1;
+
+    private pillar pillar1obj;
+    private Rectangle pillar2;
+    private pillar pillar2obj;
+
+    private ArrayList<pillar> pillarArrayList;
+
     private static double minPillarWidth = 50;
 
     private static double maxPillarWidth = 100;
 
-    public static double getMinPillarWidth() {
+    private static double getMinPillarWidth() {
         return minPillarWidth;
     }
 
-    public static void setMinPillarWidth(double minPillarWidth) {
+    private static void setMinPillarWidth(double minPillarWidth) {
         Start2.minPillarWidth = minPillarWidth;
     }
 
-    public static double getMaxPillarWidth() {
+    private static double getMaxPillarWidth() {
         return maxPillarWidth;
     }
 
-    public static void setMaxPillarWidth(double maxPillarWidth) {
+    private static void setMaxPillarWidth(double maxPillarWidth) {
         Start2.maxPillarWidth = maxPillarWidth;
     }
 
-    public static Pane scenePane;
+    private static Pane scenePane;
     private int start_x = 75;
 
     //stickman
-    public Image stickmanImage = new Image(getClass().getResourceAsStream("0x0ss-85BackgroundRemoved.png"));
+    private Image stickmanImage = new Image(getClass().getResourceAsStream("0x0ss-85BackgroundRemoved.png"));
     public ImageView stickmanImageView = new ImageView(stickmanImage);
 
-    public Timeline timeline1;
-    public Text counter;
+    private Timeline timeline1;
+    private Text counter;
 
-    public static int score = 0;
-
-
-    public Timeline timeline2;
-    public Timeline timeline3;
-
-    public Timeline timeline4;
-
-    public Image cherryImage = new Image(getClass().getResourceAsStream("590774.png"));
-    public ImageView cherryImageView = new ImageView(cherryImage);
-
-    public ImageView tempCherry = new ImageView(cherryImage);
+    private static int score = 0;
 
 
-    public static ArrayList<Double> cherryLocations = new ArrayList<Double>();
+    private Timeline timeline2;
+    private Timeline timeline3;
 
-    public int pillar2HasCherry = 0;
+    private Timeline timeline4;
 
-    public int collectedCherryCount = 0;
+    private Image cherryImage = new Image(getClass().getResourceAsStream("590774.png"));
+    private ImageView cherryImageView = new ImageView(cherryImage);
 
-    public Stage myStage;
+    private cherry cherryObj = new cherry(cherryImageView);
+
+    private ImageView tempCherry = new ImageView(cherryImage);
+
+
+    private static ArrayList<Double> cherryLocations = new ArrayList<Double>();
+
+    private int pillar2HasCherry = 0;
+
+    private int collectedCherryCount = 0;
+
+    private Stage myStage;
     private double rotationPivotY = 0;
 
-    public boolean canRotate = true;
+    private boolean canRotate = true;
 
-    public boolean increaseFlag = true;
+    private boolean increaseFlag = true;
 
-    public boolean game_lock = true;
-
-
-    public ImageView cherryView = new ImageView(cherryImage);
+    private boolean game_lock = true;
 
 
-    public Text cherryText;
+    private ImageView cherryView = new ImageView(cherryImage);
+
+
+    public Set<KeyCode> getPressedKeys() {
+        return pressedKeys;
+    }
+
+    public void setPressedKeys(Set<KeyCode> pressedKeys) {
+        this.pressedKeys = pressedKeys;
+    }
+
+    public ScaleTransition getScale() {
+        return scale;
+    }
+
+    public void setScale(ScaleTransition scale) {
+        this.scale = scale;
+    }
+
+    public boolean isFlipped() {
+        return isFlipped;
+    }
+
+    public void setFlipped(boolean flipped) {
+        isFlipped = flipped;
+    }
+
+    public storage getGameData() {
+        return gameData;
+    }
+
+    public void setGameData(storage gameData) {
+        this.gameData = gameData;
+    }
+
+    public PauseTransition getPause3() {
+        return pause3;
+    }
+
+    public void setPause3(PauseTransition pause3) {
+        this.pause3 = pause3;
+    }
+
+    public double getD() {
+        return d;
+    }
+
+    public void setD(double d) {
+        this.d = d;
+    }
+
+    public RotateTransition getRotate() {
+        return rotate;
+    }
+
+    public void setRotate(RotateTransition rotate) {
+        this.rotate = rotate;
+    }
+
+    public TranslateTransition getStickmanTransition() {
+        return stickmanTransition;
+    }
+
+    public void setStickmanTransition(TranslateTransition stickmanTransition) {
+        this.stickmanTransition = stickmanTransition;
+    }
+
+    public void setPillar3(Rectangle pillar3) {
+        this.pillar3 = pillar3;
+    }
+
+    public TranslateTransition getPillar3Transition() {
+        return pillar3Transition;
+    }
+
+    public void setPillar3Transition(TranslateTransition pillar3Transition) {
+        this.pillar3Transition = pillar3Transition;
+    }
+
+    public TranslateTransition getT() {
+        return t;
+    }
+
+    public void setT(TranslateTransition t) {
+        this.t = t;
+    }
+
+    public static boolean isFlag() {
+        return flag;
+    }
+
+    public static void setFlag(boolean flag) {
+        Start2.flag = flag;
+    }
+
+    public TranslateTransition getStickmanTransitionQuick() {
+        return stickmanTransitionQuick;
+    }
+
+    public void setStickmanTransitionQuick(TranslateTransition stickmanTransitionQuick) {
+        this.stickmanTransitionQuick = stickmanTransitionQuick;
+    }
+
+    public TranslateTransition getStickTransition() {
+        return stickTransition;
+    }
+
+    public void setStickTransition(TranslateTransition stickTransition) {
+        this.stickTransition = stickTransition;
+    }
+
+    public TranslateTransition getPillar1Transition() {
+        return pillar1Transition;
+    }
+
+    public void setPillar1Transition(TranslateTransition pillar1Transition) {
+        this.pillar1Transition = pillar1Transition;
+    }
+
+    public TranslateTransition getPillar2Transition() {
+        return pillar2Transition;
+    }
+
+    public void setPillar2Transition(TranslateTransition pillar2Transition) {
+        this.pillar2Transition = pillar2Transition;
+    }
+
+    public boolean isFlag1() {
+        return flag1;
+    }
+
+    public void setFlag1(boolean flag1) {
+        this.flag1 = flag1;
+    }
+
+    public boolean isFlag2() {
+        return flag2;
+    }
+
+    public void setFlag2(boolean flag2) {
+        this.flag2 = flag2;
+    }
+
+    public boolean isFlag3() {
+        return flag3;
+    }
+
+    public void setFlag3(boolean flag3) {
+        this.flag3 = flag3;
+    }
+
+    public boolean isFlag4() {
+        return flag4;
+    }
+
+    public void setFlag4(boolean flag4) {
+        this.flag4 = flag4;
+    }
+
+    public saveDetails getProgress() {
+        return progress;
+    }
+
+    public void setProgress(saveDetails progress) {
+        this.progress = progress;
+    }
+
+    public Rectangle getStickRct() {
+        return stickRct;
+    }
+
+    public void setStickRct(Rectangle stickRct) {
+        this.stickRct = stickRct;
+    }
+
+    public Rectangle getTempRct() {
+        return tempRct;
+    }
+
+    public void setTempRct(Rectangle tempRct) {
+        this.tempRct = tempRct;
+    }
+
+    public boolean isFlip_allow() {
+        return flip_allow;
+    }
+
+    public void setFlip_allow(boolean flip_allow) {
+        this.flip_allow = flip_allow;
+    }
+
+    public Rectangle getPillar1() {
+        return pillar1;
+    }
+
+    public void setPillar1(Rectangle pillar1) {
+        this.pillar1 = pillar1;
+    }
+
+    public pillar getPillar1obj() {
+        return pillar1obj;
+    }
+
+    public void setPillar1obj(pillar pillar1obj) {
+        this.pillar1obj = pillar1obj;
+    }
+
+    public Rectangle getPillar2() {
+        return pillar2;
+    }
+
+    public void setPillar2(Rectangle pillar2) {
+        this.pillar2 = pillar2;
+    }
+
+    public pillar getPillar2obj() {
+        return pillar2obj;
+    }
+
+    public void setPillar2obj(pillar pillar2obj) {
+        this.pillar2obj = pillar2obj;
+    }
+
+    public ArrayList<pillar> getPillarArrayList() {
+        return pillarArrayList;
+    }
+
+    public void setPillarArrayList(ArrayList<pillar> pillarArrayList) {
+        this.pillarArrayList = pillarArrayList;
+    }
+
+    public static Pane getScenePane() {
+        return scenePane;
+    }
+
+    public static void setScenePane(Pane scenePane) {
+        Start2.scenePane = scenePane;
+    }
+
+    public int getStart_x() {
+        return start_x;
+    }
+
+    public void setStart_x(int start_x) {
+        this.start_x = start_x;
+    }
+
+    public Image getStickmanImage() {
+        return stickmanImage;
+    }
+
+    public void setStickmanImage(Image stickmanImage) {
+        this.stickmanImage = stickmanImage;
+    }
+
+    public ImageView getStickmanImageView() {
+        return stickmanImageView;
+    }
+
+    public void setStickmanImageView(ImageView stickmanImageView) {
+        this.stickmanImageView = stickmanImageView;
+    }
+
+    public Timeline getTimeline1() {
+        return timeline1;
+    }
+
+    public void setTimeline1(Timeline timeline1) {
+        this.timeline1 = timeline1;
+    }
+
+    public Text getCounter() {
+        return counter;
+    }
+
+    public void setCounter(Text counter) {
+        this.counter = counter;
+    }
+
+    public static int getScore() {
+        return score;
+    }
+
+    public static void setScore(int score) {
+        Start2.score = score;
+    }
+
+    public Timeline getTimeline2() {
+        return timeline2;
+    }
+
+    public void setTimeline2(Timeline timeline2) {
+        this.timeline2 = timeline2;
+    }
+
+    public Timeline getTimeline3() {
+        return timeline3;
+    }
+
+    public void setTimeline3(Timeline timeline3) {
+        this.timeline3 = timeline3;
+    }
+
+    public Timeline getTimeline4() {
+        return timeline4;
+    }
+
+    public void setTimeline4(Timeline timeline4) {
+        this.timeline4 = timeline4;
+    }
+
+    public Image getCherryImage() {
+        return cherryImage;
+    }
+
+    public void setCherryImage(Image cherryImage) {
+        this.cherryImage = cherryImage;
+    }
+
+    public ImageView getCherryImageView() {
+        return cherryImageView;
+    }
+
+    public void setCherryImageView(ImageView cherryImageView) {
+        this.cherryImageView = cherryImageView;
+    }
+
+    public cherry getCherryObj() {
+        return cherryObj;
+    }
+
+    public void setCherryObj(cherry cherryObj) {
+        this.cherryObj = cherryObj;
+    }
+
+    public ImageView getTempCherry() {
+        return tempCherry;
+    }
+
+    public void setTempCherry(ImageView tempCherry) {
+        this.tempCherry = tempCherry;
+    }
+
+    public static ArrayList<Double> getCherryLocations() {
+        return cherryLocations;
+    }
+
+    public static void setCherryLocations(ArrayList<Double> cherryLocations) {
+        Start2.cherryLocations = cherryLocations;
+    }
+
+    public int getPillar2HasCherry() {
+        return pillar2HasCherry;
+    }
+
+    public void setPillar2HasCherry(int pillar2HasCherry) {
+        this.pillar2HasCherry = pillar2HasCherry;
+    }
+
+    public int getCollectedCherryCount() {
+        return collectedCherryCount;
+    }
+
+    public void setCollectedCherryCount(int collectedCherryCount) {
+        this.collectedCherryCount = collectedCherryCount;
+    }
+
+    public Stage getMyStage() {
+        return myStage;
+    }
+
+    public void setMyStage(Stage myStage) {
+        this.myStage = myStage;
+    }
+
+    public double getRotationPivotY() {
+        return rotationPivotY;
+    }
+
+    public void setRotationPivotY(double rotationPivotY) {
+        this.rotationPivotY = rotationPivotY;
+    }
+
+    public boolean isCanRotate() {
+        return canRotate;
+    }
+
+    public void setCanRotate(boolean canRotate) {
+        this.canRotate = canRotate;
+    }
+
+    public boolean isIncreaseFlag() {
+        return increaseFlag;
+    }
+
+    public void setIncreaseFlag(boolean increaseFlag) {
+        this.increaseFlag = increaseFlag;
+    }
+
+    public boolean isGame_lock() {
+        return game_lock;
+    }
+
+    public void setGame_lock(boolean game_lock) {
+        this.game_lock = game_lock;
+    }
+
+    public ImageView getCherryView() {
+        return cherryView;
+    }
+
+    public void setCherryView(ImageView cherryView) {
+        this.cherryView = cherryView;
+    }
+
+    public Text getCherryText() {
+        return cherryText;
+    }
+
+    public void setCherryText(Text cherryText) {
+        this.cherryText = cherryText;
+    }
+
+    public boolean isFlip_flag() {
+        return flip_flag;
+    }
+
+    public void setFlip_flag(boolean flip_flag) {
+        this.flip_flag = flip_flag;
+    }
+
+    public boolean isaKeyPressed() {
+        return aKeyPressed;
+    }
+
+    public void setaKeyPressed(boolean aKeyPressed) {
+        this.aKeyPressed = aKeyPressed;
+    }
+
+    public boolean isCollided() {
+        return collided;
+    }
+
+    public void setCollided(boolean collided) {
+        this.collided = collided;
+    }
+
+    private Text cherryText;
 
 
 
@@ -216,11 +685,14 @@ public class Start2 extends Application {
             pillar1 = new Rectangle(p1_width, 200, Color.BLACK);
             pillar1.setX(0);
             pillar1.setLayoutY(500);
+            pillar1obj = new pillar(pillar1);
 
             //Pair<Double, Double> pillar2Properties = generateRandomPillarProperties(scenePane.getWidth(), minPillarWidth, maxPillarWidth, 50);
             pillar2 = new Rectangle(p2_width, 200, Color.BLACK);
             pillar2.setLayoutX(x2);
             pillar2.setLayoutY(500);
+            pillar2obj = new pillar(pillar2);
+
             SaveCurrState.f = false;
             reloadFlag = 1;
         }
@@ -229,10 +701,12 @@ public class Start2 extends Application {
             pillar1 = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
             pillar1.setX(0);
             pillar1.setLayoutY(500);
+            pillar1obj = new pillar(pillar1);
             score = 0;
             pillar2 = new Rectangle(generateRandomNumber(70, 100), 200, Color.BLACK);
             pillar2.setLayoutX(generateRandomNumber(270, 320));
             pillar2.setLayoutY(500);
+            pillar2obj = new pillar(pillar2);
         }
         cherryText = new Text();
         cherryText.setText(String.valueOf(collectedCherryCount));
@@ -271,6 +745,11 @@ public class Start2 extends Application {
         scenePane.getChildren().add(pillar1);
         scenePane.getChildren().add(pillar2);
         scenePane.getChildren().add(stickmanImageView);
+
+        pillarArrayList = new ArrayList<>();
+        pillarArrayList.add(pillar1obj);
+        pillarArrayList.add(pillar2obj);
+        gameData = new storage(pillarArrayList);
 
     }
 
@@ -742,7 +1221,7 @@ public class Start2 extends Application {
                             HelloController hc = new HelloController();
                             try {
                                 hc.toHomeScreen(goHomeEvent);
-                            } catch (IOException e) {
+                            } catch (IOException | gameNotFoundError e) {
                                 throw new RuntimeException(e);
                             }
                         });

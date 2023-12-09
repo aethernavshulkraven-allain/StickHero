@@ -7,7 +7,6 @@ public class gameplay{
     public ArrayList<pillar> pillars = new ArrayList<pillar>();
     //player iterates over all the pillars
 
-    private pauseButton pauseGameButton;
 
     public stickman getPlayingStickman() throws stickmanNotFoundError{
         return playingStickman;

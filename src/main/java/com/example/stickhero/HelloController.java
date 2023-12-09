@@ -18,7 +18,7 @@ public class HelloController {
     private Parent root;
 
 
-    public void toHomeScreen(MouseEvent event) throws IOException {
+    public void toHomeScreen(MouseEvent event) throws IOException, gameNotFoundError {
         Parent root = FXMLLoader.load(getClass().getResource("homeScreen.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -54,8 +54,8 @@ public class HelloController {
             saveDetails s1 = (saveDetails) in.readObject();
 
             Start2 p1 = new Start2();
-            p1.reloadFlag = 1;
-            p1.saveCurrState = s1;
+            p1.setReloadFlag(1);
+            p1.setSaveCurrState(s1);
             p1.start(stage);
 
 //            System.out.println(s1);
@@ -75,8 +75,8 @@ public class HelloController {
             saveDetails s1 = (saveDetails) in.readObject();
 
             Start2 p1 = new Start2();
-            p1.reloadFlag = 1;
-            p1.saveCurrState = s1;
+            p1.setReloadFlag(1);
+            p1.setSaveCurrState(s1);
             p1.start(stage);
 
 //            System.out.println(s1);
@@ -96,8 +96,8 @@ public class HelloController {
             saveDetails s1 = (saveDetails) in.readObject();
 
             Start2 p1 = new Start2();
-            p1.reloadFlag = 1;
-            p1.saveCurrState = s1;
+            p1.setReloadFlag(1);
+            p1.setSaveCurrState(s1);
             p1.start(stage);
 
 //            System.out.println(s1);
@@ -118,8 +118,8 @@ public class HelloController {
             saveDetails s1 = (saveDetails) in.readObject();
 
             Start2 p1 = new Start2();
-            p1.reloadFlag = 1;
-            p1.saveCurrState = s1;
+            p1.setReloadFlag(1);
+            p1.setSaveCurrState(s1);
             p1.start(stage);
 
 //            System.out.println(s1);

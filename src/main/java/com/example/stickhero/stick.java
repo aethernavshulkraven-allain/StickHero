@@ -1,7 +1,19 @@
 package com.example.stickhero;
 
+import javafx.scene.shape.Rectangle;
+
 public class stick implements gameObjects, collidable{
     private coordinates position;
+
+    private Rectangle RectnagleofStick;
+
+    public Rectangle getRectnagleofStick() {
+        return RectnagleofStick;
+    }
+
+    public void setRectnagleofStick(Rectangle rectnagleofStick) {
+        RectnagleofStick = rectnagleofStick;
+    }
 
     public coordinates getPosition() {
         return position;
@@ -11,9 +23,9 @@ public class stick implements gameObjects, collidable{
         this.position = position;
     }
 
-    public stick(coordinates position, int length) {
-        this.position = position;
-        this.length = length;
+    public stick(Rectangle rectnagleofStick) {
+        this.RectnagleofStick = rectnagleofStick;
+        this.position = new coordinates((int) rectnagleofStick.getLayoutX(), (int) rectnagleofStick.getLayoutY());
     }
 
     private int length;

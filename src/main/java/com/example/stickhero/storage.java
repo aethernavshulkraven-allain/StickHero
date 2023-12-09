@@ -4,18 +4,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class storage {
-    HashMap<player, Integer> topSores = new HashMap<player, Integer>();
+    ArrayList<pillar> gamePillars = new ArrayList<>();
+
+    ArrayList<cherry> gameCherries = new ArrayList<>();
+
+    public ArrayList<pillar> getGamePillars() {
+        return gamePillars;
+    }
+
+    public void setGamePillars(ArrayList<pillar> gamePillars) {
+        this.gamePillars = gamePillars;
+    }
+
     ArrayList<player>  players = new ArrayList<player>();
-
-
-    public HashMap<player, Integer> getTopSores() {
-        return topSores;
-    }
-
-    public void setTopSores(HashMap<player, Integer> topSores) {
-        this.topSores = topSores;
-    }
-
     public ArrayList<player> getPlayers() {
         return players;
     }
@@ -24,8 +25,7 @@ public class storage {
         this.players = players;
     }
 
-    public storage(HashMap<player, Integer> topSores, ArrayList<player> players) {
-        this.topSores = topSores;
-        this.players = players;
+    public storage(ArrayList<pillar> pils) {
+        this.gamePillars = pils;
     }
 }

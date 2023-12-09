@@ -1,8 +1,29 @@
 package com.example.stickhero;
 
+import javafx.scene.image.ImageView;
+
 public class stickman implements gameObjects, collidable    {
 
     private stick avatarsStick;
+
+    private ImageView smiv;
+
+    public stick getAvatarsStick() {
+        return avatarsStick;
+    }
+
+    public void setAvatarsStick(stick avatarsStick) {
+        this.avatarsStick = avatarsStick;
+    }
+
+    public ImageView getSmiv() {
+        return smiv;
+    }
+
+    public void setSmiv(ImageView smiv) {
+        this.smiv = smiv;
+    }
+
     private coordinates position;
 
     public coordinates getPosition() {
@@ -13,13 +34,14 @@ public class stickman implements gameObjects, collidable    {
         this.position = position;
     }
 
-    public stickman(coordinates stickmanPosition) {
-        this.position = stickmanPosition;
+    public stickman(ImageView smiv) {
+        this.smiv = smiv;
+        this.position = new coordinates((int) smiv.getLayoutX(), (int) smiv.getLayoutY());
     }
 
     public stick extendStick() throws stickOutOfBoundError{
         //extends stick of length equal to the time of hold of master key
-        avatarsStick = new stick(new coordinates(0, 0), 0);
+//        avatarsStick = new stick(new coordinates(0, 0), 0);
         return avatarsStick;
     }
 
